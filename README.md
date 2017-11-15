@@ -1,0 +1,2 @@
+# missing-causal-relation
+We study risk/benefit tradeoff of missing value imputation in the context of feature selection. We caution against using imputation methods that may yield false positives: features not associated to the target becoming dependent as a result of imputation. We also investigate situations in which imputing missing values may be beneficial to reduce false negatives.  We use causal graphs to  characterize when structural bias arises and introduce a de-biased version of the t-test. 
