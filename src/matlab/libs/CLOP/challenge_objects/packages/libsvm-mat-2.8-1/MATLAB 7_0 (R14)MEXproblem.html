@@ -1,0 +1,399 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<!-- saved from url=(0077)http://www.mathworks.com/support/solutions/data/1-QBCS1.html?solution=1-QBCS1 -->
+<HTML lang=en><HEAD><TITLE>The MathWorks - 1-QBCS1: Why does MATLAB 7.0 (R14) crash or generate errors when I call mexErrMsgTxt() in a MEX-file?</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1"><!-- request.URI=/support/solutions/data/1-QBCS1.html --><!-- request.docBase=/support/solutions/data/ --><!-- request.locale.language=en --><!-- request.locale.country= --><!-- isIE=${useragent.isIE?string} --><!-- isIEandWindows=${useragent.isIEandWindows?string} --><!-- isNN4=${useragent.isNN4?string} --><LINK 
+href="MATLAB 7_0 (R14)MEXproblem_files/ie6_up.css" type=text/css 
+rel=stylesheet><LINK href="MATLAB 7_0 (R14)MEXproblem_files/site4.css" 
+type=text/css rel=stylesheet><LINK media=print 
+href="MATLAB 7_0 (R14)MEXproblem_files/print.css" type=text/css rel=stylesheet>
+<SCRIPT language=JavaScript>
+<!--
+
+function SymError()
+{
+  return true;
+}
+
+window.onerror = SymError;
+
+var SymRealWinOpen = window.open;
+
+function SymWinOpen(url, name, attributes)
+{
+  return (new Object());
+}
+
+window.open = SymWinOpen;
+
+//-->
+</SCRIPT>
+
+<SCRIPT language=JavaScript1.3 
+type=text/javascript>var host_pre = "http://www";</SCRIPT>
+
+<SCRIPT language=JavaScript1.3 
+src="MATLAB 7_0 (R14)MEXproblem_files/popup_menus.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=JavaScript1.3 
+src="MATLAB 7_0 (R14)MEXproblem_files/global_nav_en.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=JavaScript1.3 
+src="MATLAB 7_0 (R14)MEXproblem_files/local_nav.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=JavaScript1.3 src="MATLAB 7_0 (R14)MEXproblem_files/common.js" 
+type=text/javascript></SCRIPT>
+
+<META content="shut down mexErrMsgTxt() MEX MATLAB 7.0 gcc 3.2.3 mexErrMsgTxt" 
+name=Keywords>
+<META content="MSHTML 6.00.2900.2769" name=GENERATOR></HEAD>
+<BODY><A tabIndex=1 
+href="http://www.mathworks.com/support/solutions/data/1-QBCS1.html?solution=1-QBCS1#content"><IMG 
+id=content_skiplink height=1 alt="Skip to Main Content" 
+src="MATLAB 7_0 (R14)MEXproblem_files/pixelclear.gif" width=1 border=0></A> <A 
+tabIndex=2 
+href="http://www.mathworks.com/support/solutions/data/1-QBCS1.html?solution=1-QBCS1#searchskip"><IMG 
+id=search_skiplink height=1 alt="Skip to Search" 
+src="MATLAB 7_0 (R14)MEXproblem_files/pixelclear.gif" width=1 border=0></A> 
+<DIV id=globaltop2><IMG id=print_logo height=72 alt="MathWorks Logo" 
+src="MATLAB 7_0 (R14)MEXproblem_files/printable_header.gif" width=355> <A 
+href="http://www.mathworks.com/index.html?ref=logo"><IMG id=logopixel height=60 
+alt="" src="MATLAB 7_0 (R14)MEXproblem_files/pixelclear.gif" width=230></A> 
+<DIV id=ptools2><A 
+href="http://www.mathworks.com/index.html?ref=pt">Home</A>&nbsp;|&nbsp;<A 
+onmouseover="fireMenu('WorldwideGlobal',this,'r')" 
+href="http://www.mathworks.com/company/worldwide/">&nbsp;Select 
+Country&nbsp;<IMG id=country_arrow alt="Choose Country" 
+src="MATLAB 7_0 (R14)MEXproblem_files/pic_countryarrow_off.gif">&nbsp;</A>&nbsp;|&nbsp;<A 
+href="http://www.mathworks.com/company/aboutus/contact_us/">&nbsp;Contact 
+Us&nbsp;</A>&nbsp;|&nbsp;<A 
+onmouseover="mouseover(this,document.getElementById('pic_cart'), '/includes/images/global_nav/pic_cart_on.gif')" 
+href="http://www.mathworks.com/store/">&nbsp;<IMG id=pic_cart alt=Cart 
+src="MATLAB 7_0 (R14)MEXproblem_files/pic_cart_off.gif" 
+align=middle>&nbsp;Store&nbsp;</A><A name=searchskip></A> 
+<FORM id=site_search action=/cgi-bin/texis/webinator/search/ method=get><INPUT 
+type=hidden value=MSS name=db><INPUT type=hidden value=page name=prox><INPUT 
+type=hidden value=750 name=rorder><INPUT type=hidden value=750 name=rprox><INPUT 
+type=hidden value=500 name=rdfreq><INPUT type=hidden value=500 
+name=rwfreq><INPUT type=hidden value=250 name=rlead><INPUT type=hidden value=0 
+name=sufs><INPUT type=hidden value=r name=order><INPUT type=hidden value=1 
+name=is_summary_on><INPUT type=hidden value=10 name=ResultCount><LABEL 
+id=search_label for=search_field>Search</LABEL>&nbsp;<INPUT id=search_field 
+size=12 name=query>&nbsp;<INPUT id=searchbutton type=submit value=Search name=submitButtonName></FORM></DIV><IMG 
+id=pixelfade alt="" src="MATLAB 7_0 (R14)MEXproblem_files/horo_line_full.gif"> 
+<DIV id=access2><A 
+href="http://www.mathworks.com/accesslogin/myAccount.do">Isabelle&nbsp;Guyon</A>&nbsp;|&nbsp;<A 
+href="http://www.mathworks.com/accesslogin/myAccount.do">My 
+Account</A>&nbsp;|&nbsp;<A 
+href="http://www.mathworks.com/accesslogin/logout.do?uri=/support/solutions/data/1-QBCS1.html">Log 
+Out</A> </DIV></DIV>
+<TABLE id=topnav cellSpacing=0 cellPadding=0 width=778 summary="top navigation" 
+border=0>
+  <TBODY>
+  <TR id=topnavitems>
+    <TD id=tcell1 onmouseover=topNavHover(this.id) 
+    onclick="document.location='http://www.mathworks.com/products/'" 
+    onmouseout=topNavHoverOff(this.id) align=middle><A id=tmenu1 
+      onclick="return false" href="http://www.mathworks.com/products/">Products 
+      &amp; Services</A> </TD>
+    <TD id=tcell2 onmouseover=topNavHover(this.id) 
+    onclick="document.location='http://www.mathworks.com/industries/'" 
+    onmouseout=topNavHoverOff(this.id) align=middle><A id=tmenu2 
+      onclick="return false" 
+      href="http://www.mathworks.com/industries/">Industries</A> </TD>
+    <TD id=tcell3 onmouseover=topNavHover(this.id) 
+    onclick="document.location='http://www.mathworks.com/academia/'" 
+    onmouseout=topNavHoverOff(this.id) align=middle><A id=tmenu3 
+      onclick="return false" 
+      href="http://www.mathworks.com/academia/">Academia</A> </TD>
+    <TD class=activebg id=tcell4 onmouseover=topNavHover(this.id) 
+    onclick="document.location='http://www.mathworks.com/support/'" 
+    onmouseout=topNavHoverOff(this.id) align=middle><A id=tmenu4 
+      onclick="return false" 
+      href="http://www.mathworks.com/support/">Support</A> </TD>
+    <TD id=tcell5 onmouseover=topNavHover(this.id) 
+    onclick="document.location='http://www.mathworks.com/matlabcentral/'" 
+    onmouseout=topNavHoverOff(this.id) align=middle><A id=tmenu5 
+      onclick="return false" href="http://www.mathworks.com/matlabcentral/">User 
+      Community</A> </TD>
+    <TD id=tcell6 onmouseover=topNavHover(this.id) 
+    onclick="document.location='http://www.mathworks.com/company/'" 
+    onmouseout=topNavHoverOff(this.id) align=middle><A id=tmenu6 
+      onclick="return false" 
+      href="http://www.mathworks.com/company/">Company</A> </TD></TR>
+  <TR>
+    <TD><IMG height=3 alt="" 
+      src="MATLAB 7_0 (R14)MEXproblem_files/nav_inactive.gif" width="100%"></TD>
+    <TD><IMG height=3 alt="" 
+      src="MATLAB 7_0 (R14)MEXproblem_files/nav_inactive.gif" width="100%"></TD>
+    <TD><IMG height=3 alt="" 
+      src="MATLAB 7_0 (R14)MEXproblem_files/nav_inactive.gif" width="100%"></TD>
+    <TD><IMG height=3 alt="" 
+      src="MATLAB 7_0 (R14)MEXproblem_files/nav_active.gif" width="100%"></TD>
+    <TD><IMG height=3 alt="" 
+      src="MATLAB 7_0 (R14)MEXproblem_files/nav_inactive.gif" width="100%"></TD>
+    <TD><IMG height=3 alt="" 
+      src="MATLAB 7_0 (R14)MEXproblem_files/nav_inactive.gif" 
+  width="100%"></TD></TR></TBODY></TABLE>
+<TABLE id=mainframe cellSpacing=0 cellPadding=0 width=779 summary=layout 
+border=0>
+  <TBODY>
+  <TR>
+    <TD id=leftnavcol vAlign=top width=160>
+      <P>&nbsp;</P>
+      <TABLE id=leftnav cellSpacing=0 cellPadding=0 width="100%" border=0>
+        <TBODY>
+        <TR id=lmenu0>
+          <TD class=inactive onmouseover="this.className='hover';" 
+          onclick="document.location='/support/index.html'" 
+          onmouseout="this.className='inactive'"><!-- request.docBase=/support/solutions/data/ --><!-- action=/support/index.html --><A 
+            onclick="return false" 
+            href="http://www.mathworks.com/support/index.html">Support 
+            Overview</A> </TD></TR>
+        <TR id=lmenu1>
+          <TD class=inactive onmouseover="this.className='hover';" 
+          onclick="document.location='/support/install.html'" 
+          onmouseout="this.className='inactive'"><!-- request.docBase=/support/solutions/data/ --><!-- action=/support/install.html --><A 
+            onclick="return false" 
+            href="http://www.mathworks.com/support/install.html">Installation 
+            &amp; Licensing</A> </TD></TR>
+        <TR id=lmenu2>
+          <TD class=active onmouseover="this.className='hover';" 
+          onclick="document.location='/support/product/'" 
+          onmouseout="this.className='active'"><!-- request.docBase=/support/solutions/data/ --><!-- action=/support/product/ --><A 
+            onclick="return false" 
+            href="http://www.mathworks.com/support/product/">Product Support</A> 
+          </TD></TR>
+        <TR id=lmenu3>
+          <TD class=inactive onmouseover="this.className='hover';" 
+          onclick="document.location='/access/helpdesk/help/helpdesk.html'" 
+          onmouseout="this.className='inactive'"><!-- request.docBase=/support/solutions/data/ --><!-- action=/access/helpdesk/help/helpdesk.html --><A 
+            onclick="return false" 
+            href="http://www.mathworks.com/access/helpdesk/help/helpdesk.html">Documentation</A> 
+          </TD></TR>
+        <TR id=lmenu4>
+          <TD class=inactive onmouseover="this.className='hover';" 
+          onclick="document.location='/web_downloads/'" 
+          onmouseout="this.className='inactive'"><!-- request.docBase=/support/solutions/data/ --><!-- action=/web_downloads/ --><A 
+            onclick="return false" 
+            href="http://www.mathworks.com/web_downloads/">Downloads</A> </TD></TR>
+        <TR id=lmenu5>
+          <TD class=inactive onmouseover="this.className='hover';" 
+          onclick="document.location='/support/sysreq/'" 
+          onmouseout="this.className='inactive'"><!-- request.docBase=/support/solutions/data/ --><!-- action=/support/sysreq/ --><A 
+            onclick="return false" 
+            href="http://www.mathworks.com/support/sysreq/">System 
+            Requirements</A> </TD></TR>
+        <TR id=lmenu6>
+          <TD class=inactive onmouseover="this.className='hover';" 
+          onclick="document.location='/support/cs/'" 
+          onmouseout="this.className='inactive'"><!-- request.docBase=/support/solutions/data/ --><!-- action=/support/cs/ --><A 
+            onclick="return false" 
+            href="http://www.mathworks.com/support/cs/">Customer Service</A> 
+        </TD></TR>
+        <TR id=lmenu7>
+          <TD class=inactive onmouseover="this.className='hover';" 
+          onclick="document.location='/support/books/'" 
+          onmouseout="this.className='inactive'"><!-- request.docBase=/support/solutions/data/ --><!-- action=/support/books/ --><A 
+            onclick="return false" 
+            href="http://www.mathworks.com/support/books/">MATLAB &amp; Simulink 
+            Based Books</A> </TD></TR>
+        <TR>
+          <TD id=bcorner align=right><IMG height=5 alt="" 
+            src="MATLAB 7_0 (R14)MEXproblem_files/nav_bottom_corner.gif" width=5 
+            border=0></TD></TR>
+        <TR>
+          <TD id=lnbmline height=3></TD></TR></TBODY></TABLE></TD>
+    <TD id=bodycol vAlign=top><IMG id=topstrip height=27 alt="" 
+      src="MATLAB 7_0 (R14)MEXproblem_files/strip4.gif" width=618 border=0> 
+      <TABLE id=rightcol cellSpacing=0 cellPadding=0 width=160 align=right 
+      border=0>
+        <TBODY>
+        <TR>
+          <TD class=callme>
+            <TABLE id=trybuy cellSpacing=0 cellPadding=0 width="100%" 
+              border=0><TBODY>
+              <TR>
+                <TD width=19><A 
+                  href="http://www.mathworks.com/support/contact_us/index.html"><IMG 
+                  height=14 alt="" 
+                  src="MATLAB 7_0 (R14)MEXproblem_files/call.gif" width=15></A> 
+                </TD>
+                <TD><A 
+                  href="http://www.mathworks.com/support/contact_us/index.html">Contact 
+                  support</A></TD></TR>
+              <TR>
+                <TD width=19><A 
+                  href="javascript:openWindow('/cgi-bin/page_mail.cgi?language=en&amp;host=www.mathworks.com&amp;document=www.mathworks.com/support/solutions/data/1-QBCS1.html?solution=1-QBCS1');"><IMG 
+                  height=14 alt="" 
+                  src="MATLAB 7_0 (R14)MEXproblem_files/email.gif" width=15></A> 
+                </TD>
+                <TD><A 
+                  href="javascript:openWindow('/cgi-bin/page_mail.cgi?language=en&amp;host=www.mathworks.com&amp;document=www.mathworks.com/support/solutions/data/1-QBCS1.html?solution=1-QBCS1');">E-mail 
+                  this page</A></TD></TR>
+              <TR>
+                <TD width=19><A href="javascript:printWindow()"><IMG height=14 
+                  alt="" src="MATLAB 7_0 (R14)MEXproblem_files/print.gif" 
+                  width=15></A> </TD>
+                <TD><A href="javascript:printWindow()">Print this 
+              page</A></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE>
+      <DIV id=mainbody><A name=content></A>
+      <H1>Technical Solutions</H1>
+      <H2>Solution Number: 1-QBCS1</H2><BR>Date Last Modified: 14 Jul 2005 
+      <TABLE class=datatable2 cellSpacing=0 cellPadding=0 border=0>
+        <TBODY>
+        <TR>
+          <TD><STRONG>Product:</STRONG></TD>
+          <TD width=20>&nbsp;</TD>
+          <TD>MATLAB®;MATLAB® Compiler</TD></TR>
+        <TR>
+          <TD><STRONG>Reported in Release:</STRONG></TD>
+          <TD width=20>&nbsp;</TD>
+          <TD></TD></TR>
+        <TR>
+          <TD><STRONG>Fixed in Release:</STRONG></TD>
+          <TD width=20>&nbsp;</TD>
+          <TD></TD></TR>
+        <TR>
+          <TD><STRONG>Platform:</STRONG></TD>
+          <TD width=20>&nbsp;</TD>
+          <TD>Linux</TD></TR>
+        <TR>
+          <TD><STRONG>Operating System:</STRONG></TD>
+          <TD width=20>&nbsp;</TD>
+          <TD>Linux Any</TD></TR></TBODY></TABLE>&nbsp;
+      <P></P><!--subject_begin-->
+      <H3>Subject:</H3>
+      <P>Why does MATLAB 7.0 (R14) crash or generate errors when I call 
+      mexErrMsgTxt() in a MEX-file? </P><!--subject_end--><!--problem description begin-->
+      <H3>Problem Description:</H3>
+      <P><!--prob_desc_begin-->I compile my code from the MATLAB command prompt 
+      using the following command:<BR><CODE>mex ctest.c CFLAGS='$CFLAGS 
+      -fexceptions'<BR></CODE>mexopts.sh also shows that the fexception flag is 
+      included. When I call ctest from the command prompt, MATLAB still closes 
+      down when calling mexErrMsgTxt(). </P><!--problem description end-->
+      <P><!--solution_begin-->
+      <TABLE>
+        <TBODY>
+        <TR>
+          <TD width=550>
+            <DIV style="LEFT: 0px; WORD-WRAP: break-word">
+            <H3>Solution:</H3>
+            <P>Crashes when invoking mexErrMsgTxt or general runtime errors may 
+            be caused by an incompatibility between the version of GCC used to 
+            compile the MEX-file and the version used to compile MATLAB's 
+            libraries. Note that the only officially supported version of GCC is 
+            provided in Technical Note 1601:<BR><BR><A 
+            href="http://www.mathworks.com/support/tech-notes/1600/1601.html" 
+            target=_blank>http://www.mathworks.com/support/tech-notes/1600/1601.html</A><BR><BR>If 
+            you are using a different version of GCC, you can work around this 
+            issue by removing the runtime libraries from the MATLAB directory 
+            and allowing the libraries from your GCC installation to be called. 
+            Here are the required steps:<BR><BR>1. Move the runtime libraries 
+            that MATLAB ships for GCC to another directory:<BR><PRE><BR>cd $MATLAB<BR>cd sys/os/glnx86<BR>mkdir old<BR>mv libstdc++.* libg2c.* libgcc_s* old<BR>
+</PRE><BR>2. Try to run MATLAB. You should be using the system 
+            libraries (which should match the system GCC you are using). If 
+            MATLAB won't start due to missing libraries, or if your GCC is not 
+            installed in /usr/bin, then add the directory of your GCC 
+            installation to $LD_LIBRARY_PATH.<BR><BR>If you are using a 
+            supported version of GCC, then the issue may be related to your 
+            version of GLIBC. For more details, see:<BR><BR><A 
+            href="http://www.mathworks.com/support/solutions/data/1-PB3LI.html?solution=1-PB3LI" 
+            target=_blank>http://www.mathworks.com/support/solutions/data/1-PB3LI.html?solution=1-PB3LI</A> 
+
+            <P></P></DIV></TD></TR></TBODY></TABLE><!--solution_end-->&nbsp;</P>
+      <H3>Related Solutions:</H3>
+      <UL class=orngsqbul>
+        <LI><A 
+        href="http://www.mathworks.com/support/solutions/data/1-PB3LI.html?1-PB3LI">Why 
+        does calling 'mexErrMsgTxt' in my MEX-file on Linux cause MATLAB to 
+        close unexpectedly?</A> </LI></UL>
+      <TABLE cellSpacing=0 cellPadding=0 width="98%" border=0>
+        <TBODY>
+        <TR>
+          <TD align=right><IMG height=16 
+            src="MATLAB 7_0 (R14)MEXproblem_files/arrow_red.gif" width=16 
+            align=absMiddle>&nbsp; <A 
+            onclick="openWindow('https://www.customersat3.com/s/OqiPOeOV.asp?its=True&amp;IID=&amp;si=YODSPnTu%2BPA%3D&amp;SF=1-QBCS1&amp;SA=Deployment/T&amp;M',550, 650,'status=no,resizable=yes,scrollbars=yes');return false" 
+            href="https://www.customersat3.com/s/OqiPOeOV.asp?its=True&amp;IID=&amp;si=YODSPnTu%2BPA%3D&amp;SF=1-QBCS1&amp;SA=Deployment/T&amp;M"><STRONG>Provide 
+            feedback to help us improve this solution!</STRONG></A> 
+        </TD></TR></TBODY></TABLE></DIV></TD></TR></TBODY></TABLE>
+<TABLE id=globalfooter cellSpacing=0 cellPadding=3 width=778 summary=layout 
+border=0>
+  <TBODY>
+  <TR>
+    <TD align=middle>&nbsp;© 1994-2005 The MathWorks, Inc. 
+      &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;<A 
+      href="http://www.mathworks.com/help.html">Site 
+      Help</A>&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;<A 
+      href="http://www.mathworks.com/company/aboutus/policies_statements/patents.html">Patents</A>&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;<A 
+      href="http://www.mathworks.com/company/aboutus/policies_statements/trademarks.html">Trademarks</A>&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;<A 
+      href="http://www.mathworks.com/company/aboutus/policies_statements/">Privacy 
+      Policy</A> </TD></TR></TBODY></TABLE><!-- SiteCatalyst code version: G.7.
+Copyright 1997-2004 Omniture, Inc. More info available at
+http://www.omniture.com -->
+<SCRIPT language=JavaScript type=text/javascript><!--
+/* You may give each page an identifying name, server, and channel on
+the next lines. */
+var s_pageName=document.title
+var s_server=""
+var s_channel=""
+var s_pageType=""
+var s_prop1=""
+var s_prop2=""
+var s_prop3=""
+var s_prop4=""
+var s_prop5=""
+/* E-commerce Variables */
+var s_campaign=""
+var s_state=""
+var s_zip=""
+var s_events=""
+var s_products=""
+var s_purchaseID=""
+var s_eVar1=""
+var s_eVar2=""
+var s_eVar3=""
+var s_eVar4=""
+var s_eVar5=""
+//--></SCRIPT>
+
+<SCRIPT language=JavaScript 
+src="MATLAB 7_0 (R14)MEXproblem_files/s_code_remote.js" 
+type=text/javascript></SCRIPT>
+<!-- End SiteCatalyst code version: G.7. -->
+<SCRIPT language=JavaScript1.3 src="MATLAB 7_0 (R14)MEXproblem_files/footer.js" 
+type=text/javascript></SCRIPT>
+
+<SCRIPT language=JavaScript1.3 type=text/javascript>
+    </SCRIPT>
+
+<SCRIPT language=JavaScript>
+<!--
+var SymRealOnLoad;
+var SymRealOnUnload;
+
+function SymOnUnload()
+{
+  window.open = SymWinOpen;
+  if(SymRealOnUnload != null)
+     SymRealOnUnload();
+}
+
+function SymOnLoad()
+{
+  if(SymRealOnLoad != null)
+     SymRealOnLoad();
+  window.open = SymRealWinOpen;
+  SymRealOnUnload = window.onunload;
+  window.onunload = SymOnUnload;
+}
+
+SymRealOnLoad = window.onload;
+window.onload = SymOnLoad;
+
+//-->
+</SCRIPT>
+</BODY></HTML>

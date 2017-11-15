@@ -1,0 +1,43 @@
+
+function a = code_categorical(hyper) 
+%=============================================================================
+% MISSING object for coding categorical variables           
+%=============================================================================  
+% a=code_categorical(hyperParam) 
+%
+% Generates a "code_categorical" object. 
+% Replace the code values by new ones corresponding to the mean of the
+% target values in that category.
+%   Hyperparameter:
+%  none
+%
+% Methods:
+%  train, test 
+%
+%=============================================================================
+% Author of code: Isabelle Guyon -- isabelle@clopinet.com -- February 2009
+%=============================================================================
+
+a.IamCLOP=1;
+
+% <<------hyperparam initialisation------------->> 
+
+% <<-------------model----------------->> 
+a.median=[];           
+
+algoType=algorithm('missing');
+a= class(a,'missing',algoType);
+
+a.algorithm.verbosity=1;
+
+%eval_hyper;
+
+
+
+
+
+
+
+
+
+

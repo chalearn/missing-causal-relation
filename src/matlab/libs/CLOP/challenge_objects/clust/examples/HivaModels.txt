@@ -1,0 +1,61 @@
+MODEL1
+eliminate = 10
+
+my_prepro={shift_n_scale,standardize,normalize};
+my_neural = neural({'units=35', 'shrinkage=0.05' , 'balance=0' , 'maxiter=400'});
+em_model = em({'IterationsP=20','IterationsN=20','mixturesP=20',...
+                'mixturesN=10','testGivesProb=1','EliminatePriors=1e-10'});
+
+CV BER=27.53+- 1.74%
+For validation set 27.38+- 1.12%
+
+...the overall model : Train = 13.802037 Valid = 24.884170 
+---------------------------------------------------------------------------------------------------
+CV BER=29.77+- 1.71%
+
+For validation set 23.38+- 0.75%
+eliminate = 10
+my_prepro={shift_n_scale,standardize,normalize};
+my_neural = neural({'units=40', 'shrinkage=0.05' , 'balance=0' , 'maxiter=500'});
+em_model = em({'IterationsP=20','IterationsN=20','mixturesP=20',...
+                'mixturesN=10','testGivesProb=1','EliminatePriors=1e-10'});
+DataMatrix=elim_for_c(DataMatrix,10);
+
+the overall model : Train = 13.252471  ValidErr = 0.2537
+
+---------------------------------------------------------------------------------------------------
+CV BER=28.58+- 1.82%
+
+For validation set 25.76+- 1.13%
+eliminate = 10
+FoldNum = 10;
+
+my_prepro={shift_n_scale,standardize,normalize};
+my_neural = neural({'units=20', 'shrinkage=0.05' , 'balance=0' , 'maxiter=500'});
+em_model = em({'IterationsP=20','IterationsN=20','mixturesP=20',...
+                'mixturesN=10','testGivesProb=1','EliminatePriors=1e-10'});
+
+...the overall model : Train = 13.837476 Valid = 27.586873
+----------------------------------------------------------------------------------------
+
+eliminate = 20
+CV BER=28.42+- 1.78%
+For validation set 27.89+- 0.85%
+
+FoldNum = 10;
+
+my_prepro={shift_n_scale,standardize,normalize};
+my_neural = neural({'units=30', 'shrinkage=0.05' , 'balance=0' , 'maxiter=500'});
+em_model = em({'IterationsP=20','IterationsN=20','mixturesP=10',...
+                'mixturesN=10','testGivesProb=1','EliminatePriors=1e-10'});
+
+...the overall model : Train = 15.373365 Valid = 31.563707
+---------------------------------------------------------------------------------
+
+DataMatrix=elim_for_c(DataMatrix,10);
+my_prepro={shift_n_scale,standardize,normalize};
+my_neural = neural({'units=50', 'shrinkage=0.05' , 'balance=0' , 'maxiter=600'});
+em_model = em({'IterationsP=20','IterationsN=20','mixturesP=30',...
+                'mixturesN=10','testGivesProb=1','EliminatePriors=1e-10'});
+
+...the overall model : Train = 11.317760 Valid = 29.131274

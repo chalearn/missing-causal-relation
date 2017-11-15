@@ -1,0 +1,194 @@
+function [data, model]=lssvm_demo(model, data)
+%[data, model]=lssvm_demo(model, data)
+
+% Gavin Cawley, June 2006
+% Made Spider-looking by IG.
+
+debug=0;
+
+balance=0;              % By default, the ridge values are equal for both classes
+demo=0;                 % Flag determining whether this is the demo mode
+the_hp=[1,1,1,1];       % 1st hp=shrinkage, 2nd hp=coef0, 3rd hp=degree, 4th hp=gamma
+opt_options=[1,1,1,1];  % Optimize all the hyperparameters
+
+% Define optimization choices
+if nargin<1 | isempty(model), 
+    model=[];   
+    demo=1; % Run in demo mode generating fake data
+    the_hp=[1,1,1,1];   % RBF kernel 
+    opt_options=[1,0,0,1]; 
+else
+    if ~isempty(model.shrinkage), opt_options(1)=0; the_hp(1)=model.shrinkage; end
+    if ~isempty(model.coef0), opt_options(2)=0; the_hp(2)=model.coef0; end
+    if ~isempty(model.degree), opt_options(3)=0; the_hp(3)=model.degree; end
+    if ~isempty(model.gamma), opt_options(4)=0; the_hp(4)=model.gamma; end
+    balance=model.balance; % Decide whether to weigh according to class cardinality
+end
+if nargin<2, data=[]; end
+
+% Define training and test sets
+x_train=[]; t_train=[]; x_test=[]; t_test=[];
+if isempty(data)
+    if debug, fprintf(1, 'generating training and test data...\n'); end
+    [x_train, t_train] = synthetic(250);
+    [x_test,  t_test]  = synthetic(1024);
+elseif isempty(data.Y) 
+    x_test=data.X;
+else
+    if isempty(model) | isempty(model.alpha)
+        x_train=data.X;
+        t_train=data.Y;
+    else
+        x_test=data.X;
+        t_test=data.Y;
+    end
+end
+
+if isempty(model) | isempty(model.alpha)
+    
+    if debug, fprintf(1, 'performing model selection...\n'); end
+    warning off
+    %opts = optimset('Display', 'iter');
+    opts = optimset('Display', 'off');
+    hp=log2(the_hp(find(opt_options==1)));        % Optimizes only the desired paramaters
+    hp = fminunc(@press, hp, opts, x_train, t_train, the_hp, opt_options, balance);
+    warning on
+    the_hp(find(opt_options==1))=2.^hp;
+    if debug, fprintf(1, 'training the final model...\n'); end
+    if balance, if debug, fprintf(1, '==> data balanced!\n'); end; end
+    K = svc_dp('poly_rbf', x_train, x_train, the_hp(3), the_hp(4), [], [], the_hp(2));
+    [model.alpha,model.b0,y_loo] = lssvm_func(K, t_train, the_hp(1), balance);
+    model.ber_loo = balanced_errate(y_loo, t_train);
+    model.Xsv = x_train;
+    model.shrinkage=the_hp(1);
+    model.coef0=the_hp(2);
+    model.degree=the_hp(3);
+    model.gamma=the_hp(4);
+    model.balance=balance;
+    
+    if debug, fprintf(1, 'evaluating training statistics...\n'); end
+    y_train = K*model.alpha + model.b0; 
+    if debug, fprintf(1, 'Train BER = %6.4f%%\n', 100*balanced_errate(y_train, t_train)); end
+    data.X=y_train;
+    data.Y=t_train;
+    if debug, fprintf(1, 'L-O-O BER = %6.4f%%\n', 100*model.ber_loo); end
+end
+
+if ~isempty(x_test) % model must be provided
+    if debug, fprintf(1, 'evaluating test statistics...\n'); end
+    K = svc_dp('poly_rbf', x_test, model.Xsv, the_hp(3), the_hp(4), [], [], the_hp(2));
+    y_test  = K*model.alpha + model.b0; 
+    data.X=y_test;
+end
+if ~isempty(t_test)
+    if debug, fprintf(1, 'Test  BER = %6.4f%%\n', 100*balanced_errate(y_test, t_test)); end
+    data.Y=t_test;
+end
+if debug, fprintf(1, '\n'); end
+
+if demo
+    if debug, fprintf(1, 'drawing a pretty picture...\n'); end
+    figure;
+    set(axes, 'FontSize', 12);
+    h1      = plot(x_train(t_train == +1, 1), x_train(t_train == +1, 2), 'r+');
+    hold on;
+    h2      = plot(x_train(t_train == -1, 1), x_train(t_train == -1, 2), 'go');
+    a       = axis;
+    [X,Y]   = meshgrid(a(1):0.02:a(2),a(3):0.02:a(4));
+    K       = svc_dp('poly_rbf', [X(:) Y(:)], x_train, the_hp(3), the_hp(4), [], [], the_hp(2));
+    %K       = lssvmrbf(2^model.p(1), [X(:) Y(:)], x_train);
+    y       = K*model.alpha + model.b0;
+    y       = reshape(y, size(X));
+    hold on
+    [c,h3]  = contour(X, Y, y, [+1.0 +1.0], 'r--');
+    [c,h4]  = contour(X, Y, y, [+0.0 +0.0], 'b-');
+    [c,h5]  = contour(X, Y, y, [-1.0 -1.0], 'g-.');
+    hold off
+    handles = [h1 ; h2 ; h3(1) ; h4 ; h5];
+    legend(handles, 'class 1', 'class 2', 'p = 0.1', 'p = 0.5', 'p = 0.9', 'Location', 'NorthWest');
+    drawnow;
+    data.X=x_train;
+    data.Y=t_train;
+end
+
+function [alpha,b,y_loo] = lssvm_func(K, t, mu, balance)
+
+   ntp   = length(t);
+   % Handle the unbalanced case
+   not_pd=1;
+   while not_pd
+       if balance
+           pidx  = find(t>0);
+           nidx  = find(t<0);
+           pval  = length(pidx)/ntp;
+           nval  = length(nidx)/ntp;
+           mubal = ones(ntp,1);
+           mubal(pidx)=pval;
+           mubal(nidx)=nval;
+           K     = K+ mu*diag(mubal);
+       else
+           K     = K + mu*eye(size(K,1)); 
+       end
+       try
+           R     = chol(K);
+           not_pd=0;
+       catch
+           mu=mu*2;
+       end
+   end
+   one   = ones(ntp,1);
+   xi    = R\(R'\[t one]);
+   nu    = xi(:,1);
+   eta   = xi(:,2);
+   kappa = 1./sum(eta);
+   b     = kappa*sum(nu);
+   alpha = nu - eta*b;
+
+   if nargout > 2
+      Ri    = inv(R);
+      y_loo = t - alpha./(sum(Ri.^2,2) - kappa*eta.^2);
+   end
+
+function L = press(hp, x, t, the_hp, opt_options, balance)
+
+   the_hp(find(opt_options==1))=2.^hp;
+   K = svc_dp('poly_rbf', x, x, the_hp(3), the_hp(4), [], [], the_hp(2));
+
+   [alpha,b,y_loo] = lssvm_func(K, t, the_hp(1), balance);
+   if balance
+       ntp   = length(t);
+       pidx  = find(t>0);
+       nidx  = find(t<0);
+       pval  = length(pidx)/ntp;
+       nval  = length(nidx)/ntp;
+       mubal = ones(ntp,1);
+       mubal(pidx)=1/pval;
+       mubal(nidx)=1/nval;
+       L = sum(mubal.*(t - y_loo).^2);
+   else
+       L = sum((t - y_loo).^2);
+   end
+   
+function [x,t] = synthetic(ntp)
+
+% SYNTHETIC - generate realisation of Ripley's synthetic benchmark
+% Modified IG to get unbalanced classes
+fp=0.05; % fraction of positive examples
+
+   x = [sqrt(0.03)*randn(ceil(fp*ntp/2),2)+repmat([+0.4 +0.7],ceil(fp*ntp/2),1);...
+        sqrt(0.03)*randn(ceil(fp*ntp/2),2)+repmat([-0.3 +0.7],ceil(fp*ntp/2),1);...
+        sqrt(0.03)*randn(ceil((1-fp)*ntp/2),2)+repmat([-0.7 +0.3],ceil((1-fp)*ntp/2),1);...
+        sqrt(0.03)*randn(ceil((1-fp)*ntp/2),2)+repmat([+0.3 +0.3],ceil((1-fp)*ntp/2),1)]; 
+   t = [+ones(ceil(fp*ntp/2),1);...
+        +ones(ceil(fp*ntp/2),1);...
+        -ones(ceil((1-fp)*ntp/2),1);...
+        -ones(ceil((1-fp)*ntp/2),1)];
+
+   % randomise order of training patterns
+
+   idx = randperm(length(t));
+   x   = x(idx,:);
+   t   = t(idx);
+
+% bye bye...
+

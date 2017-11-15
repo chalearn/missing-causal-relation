@@ -1,0 +1,23 @@
+    function DataMatrix=bin_features(algo,DataMatrix)
+    
+    % will get rid of all non-binary features
+    
+       
+    [row col] = size(DataMatrix.X);
+    eliminated = 0;
+    i=1;
+    
+    while (i<=col-eliminated)
+        [m2 n2] = size(find(DataMatrix.train.X(:,i)~=1 & DataMatrix.train.X(:,i)~=0));
+        if (m2==0)
+            DataMatrix.X(:,i)=[];
+            end
+            
+            eliminated = eliminated+1;
+        else
+            i = i+1;
+        end
+    end
+    
+   %....eliminated binary features
+   fprintf('\n-----------DONE INITIAL FEATURE ELIM------Eliminated = %d binary features', eliminated);

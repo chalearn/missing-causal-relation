@@ -1,0 +1,322 @@
+function [retDat,algo] =  training(algo,retDat)
+%[retDat,algo] =  training(algo,retDat)
+% Train a support vector classifier.
+% kernels supported for the challenge:
+%    linear                             k(x,y)=x.y
+%    poly                poly degree d, k(x,y)=(x.y+1)^d
+%    rbf                 sigma,         k(x,y)=exp(-|x-y|^2/(2*sigma^2))
+%    poly_rbf            const, degree d, gamma
+%                        k(x,y)=(x.y+const)^d exp(-gamma|x-y|^2)                              *sigma^2))
+% Note: poly_rbf includes all the other kernels for special values
+%       of the kernel parameters.
+% Inputs:
+% algo -- A svc classifier object.
+% retDat -- A training data object.
+% Returns:
+% retDat -- The same data structure, but X is replaced by the class label
+% predictions on training data.
+% algo -- The trained svc classifier.
+
+% Isabelle Guyon -- September 2005 -- isabelle@clopinet.com
+
+if algo.algorithm.verbosity>0
+    disp(['training ' get_name(algo) '... '])
+end
+
+opt=algo.optimizer;
+
+[p,n]=get_dim(retDat);
+challenge_disable = 1; % Some options are disabled for the challenge
+
+switch opt
+    case 'gunn'
+        q=algo.degree;          % Polynomial degree
+        gamma=algo.gamma;       % RBF kernel parameter
+        coef0=algo.coef0;       % Bias added to dot product (NOT USED, always 1)
+        nu=algo.shrinkage;      % Small value added to diag. kernel matrix (L2-SVM)
+        C=algo.C;               % Soft margin constant (box constraint)
+        if(C==Inf), C=10^10; end
+        
+        if q==1 && gamma==0, 
+            kernel='linear_with_bias';
+        else
+            kernel = 'general_with_bias';
+        end
+        X=get_x(retDat);
+        Y=get_y(retDat);
+        [Alpha, Bias, kernel, q, gamma, C, Vcdim, sv, msv] = ...
+            svc_train(X, Y,kernel,q,gamma,C,nu,[],[],[],[],[],[],[],[],coef0);
+
+        %sv=support vectors
+        %msv=marginal support vectors
+        algo.nLabel=Y(sv);
+        algo.alpha=Alpha(sv);
+        algo.b0=-Bias;
+        algo.Xsv=data(X(sv,:));
+        algo.nSV=length(sv);
+    case {'libsvm28'}
+        % options:
+        %    -s svm_type : set type of SVM (default 0)
+        %        0 -- C-SVC
+        %        1 -- nu-SVC
+        %        2 -- one-class SVM
+        %        3 -- epsilon-SVR
+        %        4 -- nu-SVR
+        %    -t kernel_type : set type of kernel function (default 2)
+        %        0 -- linear: u'*v
+        %        1 -- polynomial: (gamma*u'*v + coef0)^degree
+        %        2 -- radial basis function: exp(-gamma*|u-v|^2)
+        %        3 -- sigmoid: tanh(gamma*u'*v + coef0)
+        %    -d degree : set degree in kernel function (default 3)
+        %    -g gamma : set gamma in kernel function (default 1/k)
+        %    -r coef0 : set coef0 in kernel function (default 0)
+        %    -c cost : set the parameter C of C-SVC, epsilon-SVR, and nu-SVR (default 1)
+        %    -n nu : set the parameter nu of nu-SVC, one-class SVM, and nu-SVR (default 0.5)
+        %    -p epsilon : set the epsilon in loss function of epsilon-SVR (default 0.1)
+        %    -m cachesize : set cache memory size in MB (default 40)
+        %    -e epsilon : set tolerance of termination criterion (default 0.001)
+        %    -h shrinking: whether to use the shrinking heuristics, 0 or 1 (default 1)
+        %    -b probability_estimates: whether to train a SVC or SVR model for probability estimates, 0 or 1 (default 0)
+        %    -wi weight: set the parameter C of class i to weight*C, for C-SVC (default 1)
+        %    -x ridge: small value added to the diagonal of the kernel matrix (default 1e-14).
+        %
+        %    The k in the -g option means the number of attributes in the input data.
+        %
+        %    option -v randomly splits the data into n parts and calculates cross
+        %    validation accuracy/mean squared error on them.
+        %
+    
+        % Parameter values
+        
+        svm_type=num2str(0);              % C SVM
+        switch(algo.child.ker)            % Kernel type
+            case 'linear'
+                kernelType='0'; 
+            case {'poly', 'poly_with_bias'}
+                kernelType='1'; 
+            case 'rbf'
+                kernelType='2'; 
+            case {'poly_rbf', 'linear_with_bias'} %IG Oct 18,05
+                kernelType='4'; % number 3 is the tanh kernel, not supported
+            otherwise
+                error('kernel not supported yet');
+        end
+        kernelType='4';
+        degree=num2str(algo.degree);     % Polynomial degree
+        gamma=num2str(algo.gamma);       % RBF kernel parameter
+        coef0=num2str(algo.coef0);       % Bias added to dot product
+        ridge=num2str(algo.shrinkage);   % Small value added to diag. kernel matrix (L2-SVM)
+        C=algo.C;                        % Soft margin constant (box constraint)
+        if(C==Inf), C=10^10; end
+        C=num2str(C);         
+        
+        libsvm_options=['-s ' svm_type ' -t ' kernelType ' -d ' degree ' -g ' gamma ' -r ' coef0 ' -c ' C ' -x ' ridge];
+        %libsvm_options
+        
+        % Call LibSVM
+        %model = svmtrain(get_y(retDat), get_x(retDat), libsvm_options);
+        %model = svmtrain(get_x(retDat), get_y(retDat), libsvm_options);
+        model = svmtrain(get_x(retDat), get_y(retDat));
+
+        %this does not seem to be working anymore since I have introduced
+        %the poly_rbf kernel...
+        %[predict_label, accuracy] = svmpredict(get_y(retDat), get_x(retDat), model);
+        %accuracy
+        %ber=balanced_errate(predict_label, get_y(retDat))
+
+        % svmtrain returns a structure with members:
+        % [Parameters, nr_class, totalSV, rho, Label, ProbA, ProbB, nSV, sv_coef, SVs]:
+        
+        % New version:
+        % model.SVs=model.SupportVectors;
+       % model.nSVs=length(model.SVs);
+       % model.rho=model.Bias;
+       % model.sv_coef=model.Alpha;
+       % model.Label=model.GroupNames;
+        
+        algo.nLabel=model.Label;
+        algo.alpha=model.sv_coef*model.Label(1);
+        algo.b0=-model.rho*model.Label(1);
+        algo.Xsv=data(model.SVs);
+        algo.nSV=model.nSV;
+        
+    %% <<---------------- OSU libsvm -------------------->>
+    case {'osulibsvm'} 
+        sparse_data=0;
+        if issparse(get_x(retDat))
+            sparse_data=1;
+        end
+        x=full(get_x(retDat))'; % Cannot handle sparse matrices
+        y=full(get_y(retDat))'; 
+
+        % Default values
+        kernelType=0; % Linear kernel
+        degree=3; % Third degree polynomial
+        gamma=0; % RBF kernel parameter
+        coef0=0; % Bias added to dot product
+        
+        % C SVM
+        svm_type=0;
+        C=algo.C;
+        if(C==Inf)
+          C=10^10;
+        end
+        % set the parameter C of class i to weight*C, for C-SVC (default 1)
+        Weight=[];
+        if algo.balanced_C
+            if ~challenge_disable
+                pnum=length(find(y>0));
+                nnum=length(find(y<0));
+                Weight(1)=pnum/(pnum+nnum);
+                Weight(2)=nnum/(pnum+nnum);
+            else
+                algo.balanced_C=0;
+                disp 'no balanced C for the challenge ...';
+            end
+        end
+        
+        % Nu SVM
+        nu=algo.nu;
+        if(nu>0)
+            if ~challenge_disable
+                svm_type=1;
+            else
+                algo.nu=0;
+                disp 'no nu-svm for the challenge ...';
+            end
+        end
+        
+        % Cache
+        s=whos('libsvm_cachesize','global');
+        if (length(s)>0)
+            global libsvm_cachesize;
+            cachesize=libsvm_cachesize;
+            if algo.algorithm.verbosity>1
+                fprintf('Using %d MB Cache for Libsvm\n',cachesize)
+            end
+        else
+            cachesize=40; % Use the same default as Libsvm
+        end
+  
+        eps=1e-3; % tolerance of termination criterion (default: 0.001)
+        p=0.1; % loss tolerance: epsilon in loss function of epsilon-SVR (default: 0.1)
+        shrinking=0; % whether to use the shrinking heuristics, 0 or 1 
+        
+        % Kernel choice (only 3 choices for the challenge)
+        if strcmp(algo.child.ker,'linear')
+          kernelType = 0;
+        end;
+        if strcmp(algo.child.ker,'poly')
+          kernelType = 1; 
+          degree = algo.child.kerparam;
+          coef0 = 1;
+          gamma = 1;
+        end;
+        if strcmp(algo.child.ker,'rbf'),
+          kernelType = 2; 
+          sigma = algo.child.kerparam; 
+          gamma = 1/(2*sigma^2);
+        end;      
+        % Custom kernels
+        if strcmp(algo.child.ker,'custom'),
+            if ~challenge_disable
+                kernelType = 4; 
+                K= algo.child.kerparam;
+                l = get_dim( retDat);
+                x = get_index( retDat);
+                x = [ reshape( x, l, 1) [ 1:l]']; % using x to pass indices in Matrix and real indices
+            else
+                disp 'no custom kernel allowed for the challenge ...';
+            end
+        end
+        
+        if algo.shrinkage~=0,
+           disp 'ridge is ignored for libsvm ...';
+        end
+        if algo.balanced_ridge~=0,
+           disp 'balanced ridge is ignored for libsvm ...';
+        end
+
+        % Call OSU's interface
+        Parameters = [kernelType, degree, gamma, coef0, C, cachesize, eps, svm_type, nu, p, shrinking];
+        if (kernelType==0)
+            Parameters = [0 1 1 1 C];
+            [alpha, xSV, bias0, Parameters, nSV, nLabel] = LinearSVC(x, y, C);
+        else
+            if ~isempty(Weight)
+                % Implement the balanced C feature
+                [alpha, xSV, bias0, Parameters, nSV, nLabel] = SVMTrain(x, y, Parameters, Weight);
+            else
+                [alpha, xSV, bias0, Parameters, nSV, nLabel] = SVMTrain(x, y, Parameters);
+            end
+        end
+        
+        %[ClassRate, DecisionValue, Ns, ConfMatrix, PreLabels]= SVMTest(x, y, alpha, xSV, bias0,Parameters, nSV, nLabel);
+        
+        if sparse_data, 
+            xSV=sparse(xSV);
+        end
+        algo.Xsv=data(xSV');                
+        algo.b0 = -bias0 * nLabel(1); 
+        algo.nSV=nSV;
+        algo.nLabel=nLabel;
+        algo.alpha = alpha' * nLabel(1); 
+        
+    otherwise
+        if algo.algorithm.verbosity>0
+            disp(['training algorithm not supported... '])
+        end
+end
+
+%% <<---------------- Add W (useful for the linear case) -------------------->>
+%algo.W=sum(alpha(:,ones(1,n)).*algo.Xsv.X);
+
+alpha = algo.alpha.*algo.nLabel;
+algo.W=sum(alpha(:,ones(1,n)).*algo.Xsv.X);
+
+%% <<---------------- Alpha used and cutoff -------------------->>
+%% code to find which alphas were actually used
+%% in libsvm might be slow but more robust
+%% can switch off using algo.cutoff=-2
+if algo.nSV>0 & algo.alpha_cutoff>-2
+    if ~challenge_disable
+        D=[];
+        for i=1:1000:get_dim(retDat)
+            tak=[i:min(get_dim(retDat),i+999)];
+            D=[D;calc(distance,algo.Xsv,get(retDat,[tak]))];
+        end
+        [m1 m2]=min(D);
+        f=m2; 
+        algo.Xsv=retDat;
+        alphas=retDat.Y*0; alphas(f)=alpha; alpha=alphas;
+    else
+        disp 'no alpha cutoff allowed for the challenge ...';
+    end
+end
+
+fin = find( abs( alpha)>algo.alpha_cutoff);
+algo.alpha = alpha( fin);
+algo.Xsv = get( algo.Xsv, fin);
+
+if algo.compute_sv_idx
+    D=[get_y(retDat), get_x(retDat)];
+    Dsv=[sign(algo.alpha), get_x(algo.Xsv)];
+    for i=1:size(Dsv, 1)
+        for j=1:size(D, 1)
+            if all(Dsv(i,:)==D(j,:))
+                algo.sv_idx(i)=j;
+            end
+        end
+    end
+end
+
+if algo.algorithm.do_not_evaluate_training_error
+    retDat=set_x(retDat,get_y(retDat)); 
+else
+    retDat=test(algo,retDat);
+end
+
+
+
+
+

@@ -1,0 +1,47 @@
+function [dat, alg] =  training(alg,dat)
+%[dat, alg] =  training(alg,dat)
+% Compute the Pearson correlation coefficient
+% and rank the features accordingly.
+% Returns the training data matrix dat restricted to the
+% selected features (i.e. feat_num<=feat_max and w>w_min.
+
+% Isabelle Guyon -- isabelle@clopinet.com -- December 2005
+  
+if alg.algorithm.verbosity>0
+    disp(['training ' get_name(alg) '... '])
+end
+ 
+[p,n]=get_dim(dat);
+
+X=get_x(dat);
+Y=get_y(dat);
+
+W=zeros(1,n);
+P=zeros(1,n);
+for k=1:n
+    if(var(X(:,1))==0)
+        W(k)=0;
+        P(k)=1;
+    else
+        [R, P]=corrcoef(X(:,k),Y);
+        W(k)=R(1,2);
+        P(k)=R(1,2);
+    end
+end
+alg.W=W;
+[ss,alg.fidx]=sort(-W);
+alg.pval = P
+sorted_fdr=alg.pval(alg.fidx).*[1:n]/n;
+alg.fdr(alg.fidx) = sorted_fdr;
+
+  
+if ~alg.algorithm.do_not_evaluate_training_error
+    dat=test(alg, dat);
+end
+
+  
+
+  
+
+  
+  

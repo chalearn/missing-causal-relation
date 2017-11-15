@@ -1,0 +1,36 @@
+function plot_feat(val, w, fidx, y)
+%plot_feat(val, w, fidx, y)
+% Show place of feature on digit image
+% val = pixel values
+% w = feature weights of features
+% fidx = index of the features
+% y = target
+
+if nargin<4, y=[]; end
+
+% Isabelle Guyon -- May 2005 -- isabelle@clopinet.com
+
+show_digit(val); hold on
+
+vali=val(fidx);
+
+if ~isempty(y) 
+posval=find(vali>0.5);
+negval=find(vali<=0.5);
+
+    if y==-1;
+        posval0=posval;
+        posval=negval;
+        negval=posval0;
+    end
+
+n=sqrt(length(w));
+icoord=repmat([1:n]',1,n); icoord=icoord(:);
+jcoord=repmat([1:n],n,1); jcoord=jcoord(:);
+
+plot(icoord(topi(posval)),jcoord(topi(posval)), 'r+','LineWidth',4);
+plot(icoord(topi(negval)),jcoord(topi(negval)), 'g+','LineWidth',4);
+plot(icoord(topi0),jcoord(topi0), 'bo');
+
+
+

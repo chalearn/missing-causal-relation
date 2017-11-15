@@ -1,0 +1,116 @@
+NOVA RESULTS
+
+
+------------------------------------------------------------------------------------------------------------------
+MODEL 1
+
+DataMatrix=elim_for_c(DataMatrix,0.3);
+
+my_prepro={shift_n_scale,standardize};
+my_neural = neural({'units=15', 'shrinkage=0.005' , 'maxiter=400','balance=0'});
+bernoulli_em_model = emBernoulli({'IterationsP=10','IterationsN=10','mixturesP=20','mixturesN=20','EliminatePriors=1e-10','testGivesProb=1'});
+SVMModel =  svm({kernel('entropy',.005), 'optimizer="libsvm"',...
+                        'C=.05','algorithm.use_signed_output=0'});
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({bernoulli_em_model,my_prepro{:}, my_neural,bias({'option=4'})});   
+
+Training CV BER= 5.86+- 0.39%  .....   For validation set 4.84+- 0.25%
+
+Train = 3.680908 Valid = 2.800000
+
+
+------------------------------------------------------------------------------------------------------------------
+MODEL 2
+
+DataMatrix=elim_for_c(DataMatrix,0.3);
+
+
+my_prepro={shift_n_scale,standardize};
+my_neural = neural({'units=20', 'shrinkage=0.005' , 'maxiter=400','balance=0'});
+bernoulli_em_model = emBernoulli({'IterationsP=10','IterationsN=10','mixturesP=20','mixturesN=20','EliminatePriors=1e-10','testGivesProb=1'});
+SVMModel =  svm({kernel('entropy',.005), 'optimizer="libsvm"',...
+                        'C=.05','algorithm.use_signed_output=0'});
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({bernoulli_em_model,my_prepro{:}, my_neural,bias({'option=4'})});      
+
+
+Training CV BER= 6.14+- 0.49%   ..... For validation set 5.12+- 0.35%
+
+
+Train = 3.680908 Valid = 2.800000
+
+------------------------------------------------------------------------------------------------------------------------
+MODEL 3
+
+DataMatrix=elim_for_c(DataMatrix,0.3);
+
+my_prepro={shift_n_scale,standardize};
+my_neural = neural({'units=8', 'shrinkage=0.005' , 'maxiter=400','balance=0'});
+bernoulli_em_model = emBernoulli({'IterationsP=10','IterationsN=10','mixturesP=20','mixturesN=20','EliminatePriors=1e-10','testGivesProb=1'});
+SVMModel =  svm({kernel('entropy',.005), 'optimizer="libsvm"',...
+                        'C=.05','algorithm.use_signed_output=0'});
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({bernoulli_em_model,my_prepro{:}, my_neural,bias({'option=4'})});      
+
+Training CV BER= 6.14+- 0.49%   .....  For validation set 5.40+- 0.41%
+
+
+Train = 3.680908 Valid = 2.800000
+
+
+------------------------------------------------------------------------------------------------------------------------
+MODEL 4
+
+
+DataMatrix=elim_for_c(DataMatrix,0.3);
+
+my_prepro={shift_n_scale,standardize};
+my_neural = neural({'units=15', 'shrinkage=0.005' , 'maxiter=400','balance=0'});
+bernoulli_em_model = emBernoulli({'IterationsP=10','IterationsN=10','mixturesP=15','mixturesN=15','EliminatePriors=1e-10','testGivesProb=1'});
+SVMModel =  svm({kernel('entropy',.005), 'optimizer="libsvm"',...
+                        'C=.05','algorithm.use_signed_output=0'});
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({bernoulli_em_model,my_prepro{:}, my_neural,bias({'option=4'})});         
+
+
+Training CV BER= 6.28+- 0.34%  .... For validation set 5.12+- 0.23%
+
+Train = 3.820949 Valid = 2.800000
+
+------------------------------------------------------------------------------------------------------------------------
+MODEL 5
+
+DataMatrix=elim_for_c(DataMatrix,0.3);
+
+
+my_prepro={shift_n_scale,standardize};
+my_neural = neural({'units=25', 'shrinkage=0.005' , 'maxiter=400','balance=0'});
+bernoulli_em_model = emBernoulli({'IterationsP=10','IterationsN=10','mixturesP=10','mixturesN=10','EliminatePriors=1e-10','testGivesProb=1'});
+SVMModel =  svm({kernel('entropy',.005), 'optimizer="libsvm"',...
+                        'C=.05','algorithm.use_signed_output=0'});
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({bernoulli_em_model,my_prepro{:}, my_neural,bias({'option=4'})});       
+
+Training CV BER= 6.56+- 0.49%  ....   For validation set 5.68+- 0.31%
+
+
+Train = 3.820949 Valid = 2.800000
+
+------------------------------------------------------------------------------------------------------------------------
+MODEL 6
+
+DataMatrix=elim_for_c(DataMatrix,0.3);
+
+
+my_prepro={shift_n_scale,standardize};
+my_neural = neural({'units=25', 'shrinkage=0.005' , 'maxiter=400','balance=0'});
+bernoulli_em_model = emBernoulli({'IterationsP=10','IterationsN=10','mixturesP=10','mixturesN=10','EliminatePriors=1e-10','testGivesProb=1'});
+SVMModel =  svm({kernel('entropy',.005), 'optimizer="libsvm"',...
+                        'C=.05','algorithm.use_signed_output=0'});
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({bernoulli_em_model,my_prepro{:}, boost_model,bias({'option=4'})});                    
+                   
+
+
+Train = 3.680908 Valid = 2.800000
+

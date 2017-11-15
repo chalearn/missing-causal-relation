@@ -1,0 +1,35 @@
+function dout =  testing(a0,d)
+
+
+testpoints= get_x(d);
+nr_of_points= length(testpoints(:,1));
+
+%optimizing  W  WITH H fixed
+for  i=1:nr_of_points
+        for  a=1:a0.N
+
+            s=0;
+            d=0;
+
+            for mu=1:nr_of_points
+                if actual(i,mu) > 1e-3
+                  s=s+H2(a,mu)*V(i,mu)/actual(i,mu);    
+              end
+            end
+           
+            d=sum(H2(a,:));
+            
+            W2(i,a)= W1(i,a)*s/d;
+
+        end
+    end
+    
+ 
+
+
+
+Y=testpoints*pinv(a.H);
+
+dout=d;
+dout.Y=Y;
+  

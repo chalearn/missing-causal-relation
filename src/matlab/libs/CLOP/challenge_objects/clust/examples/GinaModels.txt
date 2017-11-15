@@ -1,0 +1,89 @@
+MODEL 1
+
+DataMatrix=elim_for_c(DataMatrix,40);
+my_prepro={shift_n_scale,standardize};
+my_neural = neural({'units=20', 'shrinkage=0.005' , 'maxiter=500','balance=1'});
+binomial_em_model = emBinomial({'IterationsP=10','IterationsN=10','mixturesP=15','mixturesN=15','EliminatePriors=1e-10','testGivesProb=1'});
+bernoulli_em_model = emBernoulli({'IterationsP=10','IterationsN=10','mixturesP=25','mixturesN=25','EliminatePriors=1e-10','testGivesProb=1'});
+SVMModel =  svm({kernel('entropy',.005), 'optimizer="libsvm"',...
+                        'C=.05','algorithm.use_signed_output=0'});
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({bernoulli_em_model,my_prepro{:}, boost_model,bias({'option=4'})});       
+
+Train = 1.427082 Valid = 0.635081
+
+-------------------------------------------------------------------------------------------------
+MODEL 2
+DataMatrix=elim_for_c(DataMatrix,40);
+my_prepro={shift_n_scale,standardize};
+my_neural = neural({'units=15', 'shrinkage=0.05' , 'maxiter=500','balance=1'});
+binomial_em_model = emBinomial({'IterationsP=10','IterationsN=10','mixturesP=15','mixturesN=15','EliminatePriors=1e-10','testGivesProb=1'});
+bernoulli_em_model = emBernoulli({'IterationsP=10','IterationsN=10','mixturesP=15','mixturesN=15','EliminatePriors=1e-10','testGivesProb=1'});
+SVMModel =  svm({kernel('entropy',.005), 'optimizer="libsvm"',...
+                        'C=.05','algorithm.use_signed_output=0'});
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({bernoulli_em_model,my_prepro{:}, boost_model,bias({'option=4'})});  
+
+Train = 2.632624 Valid = 1.270161
+
+-------------------------------------------------------------------------------------------------
+MODEL 3
+
+DataMatrix=elim_for_c(DataMatrix,40);
+my_prepro={shift_n_scale,standardize};
+my_neural = neural({'units=15', 'shrinkage=0.05' , 'maxiter=300','balance=0'});
+binomial_em_model = emBinomial({'IterationsP=10','IterationsN=10','mixturesP=15','mixturesN=15','EliminatePriors=1e-10','testGivesProb=1'});
+bernoulli_em_model = emBernoulli({'IterationsP=10','IterationsN=10','mixturesP=15','mixturesN=15','EliminatePriors=1e-10','testGivesProb=1'});
+SVMModel =  svm({kernel('entropy',.005), 'optimizer="libsvm"',...
+                        'C=.05','algorithm.use_signed_output=0'});
+base_model=chain({bernoulli_em_model,my_prepro{:}, boost_model,bias({'option=4'})});   
+Train = 2.251927 Valid = 1.270161
+
+-------------------------------------------------------------------------------------------------
+MODEL 4
+
+DataMatrix=elim_for_c(DataMatrix,40);
+my_prepro={shift_n_scale,standardize};
+my_neural = neural({'units=20', 'shrinkage=0.05' , 'maxiter=400','balance=0'});
+binomial_em_model = emBinomial({'IterationsP=10','IterationsN=10','mixturesP=15','mixturesN=15','EliminatePriors=1e-10','testGivesProb=1'});
+bernoulli_em_model = emBernoulli({'IterationsP=10','IterationsN=10','mixturesP=20','mixturesN=20','EliminatePriors=1e-10','testGivesProb=1'});
+SVMModel =  svm({kernel('entropy',.005), 'optimizer="libsvm"',...
+                        'C=.05','algorithm.use_signed_output=0'});
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({bernoulli_em_model,my_prepro{:}, boost_model,bias({'option=4'})});                    
+cv_model    = cv(base_model, {['folds=',num2str(FoldNum)]});
+
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({bernoulli_em_model,my_prepro{:}, boost_model,bias({'option=4'})});        
+
+Train = 1.046385 Valid = 0.635081
+
+-------------------------------------------------------------------------------------------------
+MODEL 5
+
+DataMatrix=elim_for_c(DataMatrix,40);
+my_prepro={shift_n_scale,standardize};
+my_neural = neural({'units=15', 'shrinkage=0.005' , 'maxiter=300','balance=0'});
+binomial_em_model = emBinomial({'IterationsP=10','IterationsN=10','mixturesP=15','mixturesN=15','EliminatePriors=1e-10','testGivesProb=1'});
+bernoulli_em_model = emBernoulli({'IterationsP=10','IterationsN=10','mixturesP=25','mixturesN=25','EliminatePriors=1e-10','testGivesProb=1'});
+SVMModel =  svm({kernel('entropy',.005), 'optimizer="libsvm"',...
+                        'C=.05','algorithm.use_signed_output=0'});
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({bernoulli_em_model,my_prepro{:}, boost_model,bias({'option=4'})});                    
+ 
+Train = 1.427082 Valid = 0.635081
+
+-------------------------------------------------------------------------------------------------
+MODEL 6
+
+DataMatrix=elim_for_c(DataMatrix,40);
+my_prepro={shift_n_scale,standardize};
+my_neural = neural({'units=15', 'shrinkage=0.005' , 'maxiter=300','balance=0'});
+binomial_em_model = emBinomial({'IterationsP=10','IterationsN=10','mixturesP=15','mixturesN=15','EliminatePriors=1e-10','testGivesProb=1'});
+bernoulli_em_model = emBernoulli({'IterationsP=10','IterationsN=10','mixturesP=35','mixturesN=35','EliminatePriors=1e-10','testGivesProb=1'});
+SVMModel =  svm({kernel('entropy',.005), 'optimizer="libsvm"',...
+                        'C=.05','algorithm.use_signed_output=0'});
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({bernoulli_em_model,my_prepro{:}, boost_model,bias({'option=4'})});      
+
+Train = 1.046385 Valid = 0.000000

@@ -1,0 +1,78 @@
+function a = em(hyper) 
+%=============================================================================
+% Expectation maximization object for learning bernoulli mixtures             
+% for binary data only
+% written by Mehreen Saeed 01 June, 2007. FAST NUCES
+%=============================================================================  
+% a=em(hyperParam) 
+%
+% Generates an em object with given hyperparameters.
+%
+%
+%   Hyperparameters (with defaults)
+%   child=kernel         -- the kernel is stored as a member called "child"
+%   IterationsP = 20     -- Iterations for the em step for +ve examples
+%   mixturesP=5          -- total number of mixtures to use for +ve
+%                           examples
+%   IterationsN = 20     -- Iterations for the em step for -ve examples
+%   mixturesN=5          -- total number of mixtures to use for -ve
+%                           examples
+%   testGivesProb=0      -- flag to indicate whether test routine gives log prob
+%   EliminatePriors=0    -- Indicates whether to eliminate the mixtures
+%                           with priors less than a certain value...specify
+%                           the threshold value here
+%   Model
+%    priorP              -- the prior probabilities of each mixture in +ve
+%                           examples mx
+%    probabP            -- the probability vector for each mixture in +ve
+%                           examples
+%    priorN              -- the prior probabilities of each mixture in -ve
+%                           examples
+%    probabN            -- the probability vector for each mixture in -ve
+%                           examples
+%    PosPriorP          -- the prior of class representing +ve examples
+%    NegPriorP          -- the prior of clas representing -ve examples
+%
+% Methods:
+%  train, test,         -- self explanatory
+%    GetLogProb         -- get the log of prob matrix of instances with
+%    prob of mixtures
+%
+% Example:
+%
+% to be written
+%
+%=============================================================================
+% Reference : to be added
+%
+%=============================================================================
+
+  %<<------hyperparam initialisation------------->> 
+  a.IterationsP=20;
+  a.mixturesP=5;    
+  a.IterationsN=20;
+  a.mixturesN=5;
+  a.testGivesProb = 0; 
+  a.EliminatePriors = 0;
+  % <<-------------model----------------->> 
+  a.PosPrior= 0.5;
+  a.NegPrior = 0.5;
+ 
+  a.priorP=[];
+  a.probP=[];
+  
+  a.priorN=[];
+  a.probN=[];
+  
+  
+  algoType=algorithm('em');
+  a= class(a,'em',algoType);
+  
+ if nargin==1,
+    eval_hyper;
+ end;
+
+
+
+
+

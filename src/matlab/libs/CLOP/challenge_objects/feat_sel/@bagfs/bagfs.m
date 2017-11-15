@@ -1,0 +1,74 @@
+function a = bagfs(child, hyper) 
+
+%=========================================================================
+% Bagging of feature ranking methods
+%=========================================================================   
+% A=bagfs(H) returns a bagfs object initialized with hyperparameters H. 
+%
+% A feature ranking algorithm must be provided as argument.
+% The default is s2n.
+% The train method ranks features according to the average of the
+% rank of several versions of the child method trained on subsamples
+% of the data.
+% The top ranking features are selected and the new data matrix returned.
+% The test method uses the ranking obtained with the train method.
+% It selects the top ranking features and returns the new data matrix.
+%
+%  Hyperparameters, and their defaults
+%
+%   child           -- Ranking algorithm.
+%   f_max           -- Maximum number of features to be selected;
+%                     if f_max=Inf then no limit is set on the number of
+%                     features.
+%   w_min           -- Threshold on the ranking criterion W;
+%                     if W(i) <= w_min, the feature i is eliminated.
+%                     W is positive. A negative value of w_min
+%                     means all the features are kept.
+%   child_num       -- number of children, default 10.
+%   frac_sub        -- fraction of examples used for training ; default 0.9.
+%   
+%  Model
+%
+%  a.fidx          -- Indices of the ranked features, according to a.W. Best first.
+%  a.W             -- Ranking criterion.
+%
+%  Methods:
+%   train, test, get_w, get_fidx.
+%
+%  Example:
+%  d=gen(toy); 
+%  a=bagfs({'child=relief', 'f_max=100', 'child_num=100'});
+%  get_fidx(a)  
+%
+% Isabelle Guyon -- isabelle@clopinet.com -- February 2009
+
+a.child=s2n;
+if nargin==1
+    hyper=child;
+elseif nargin>1
+    a.child=child;
+end
+
+% hyperparameters
+a.display_fields={'f_max', 'w_min', 'frac_sub', 'child_num'};
+a.f_max= default(Inf, [0 Inf]);             % number of features 
+a.w_min= default(-Inf, [-Inf Inf]);         % threshold of the criterion    
+a.frac_sub= default(0.9, [0 1]);            % fraction of examples used
+a.child_num= default(10, [0 Inf]);          % number of children
+% model
+a.fidx=[];
+a.W=[];
+
+algoType=algorithm('bagfs');
+a= class(a,'bagfs',algoType);
+
+a.algorithm.do_not_evaluate_training_error=0; 
+a.algorithm.verbosity=1;
+
+% overwrite the defaults
+eval_hyper;
+
+
+
+   
+  

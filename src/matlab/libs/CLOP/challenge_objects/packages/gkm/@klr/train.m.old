@@ -1,0 +1,161 @@
+function [net,mu,eta] = train(net, x, y, varargin)
+%
+% TRAIN - train a generalised kernel machine via IRWLS
+%
+%    MODEL=TRAIN(MODEL,X,Y) trains a generalised kernel machine, MODEL, using
+%    the input vectors, X, and responses, Y.  Here X is typically a matrix
+%    containing the input vectors, where each row represents a training
+%    pattern and each column an input feaure and Y is a column vector 
+%    containing the corresponding values for the response variable.
+%
+%    See also: GKM
+
+%
+% File        : @gkm/train.m
+%
+% Date        : Mondel 27t August 2007
+%
+% Author      : Dr Gavin C. Cawley
+%
+% Description : Train a generalised kernel machine using Newtons' method.
+%
+% History     : 27/08/2007 - v1.00 
+%
+% Copyright   : (c) Dr Gavin C. Cawley, April 2007.
+%
+%    This program is free software; you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation; either version 2 of the License, or
+%    (at your option) any later version.
+%
+%    This program is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with this program; if not, write to the Free Software
+%    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+%
+
+MaxIter      = get(net, 'MaxIter');
+TolFun       = get(net, 'TolFun');
+OutputStream = get(net, 'OutputStream');
+Verbosity    = get(net, 'Verbosity');
+invlink      = get(net, 'invlink');
+lambda       = get(net, 'lambda');
+kernel       = get(net, 'kernel');
+loss         = get(net, 'loss');
+theta        = get(net, 'theta');
+W            = get(net, 'W');
+
+% set up reporting format
+
+format = 'epoch = %3d : L = %+-12.10g   ';
+
+if strcmp(Verbosity, 'ethereal')
+
+   report = @ethereal;
+
+elseif strcmp(Verbosity, 'silent')
+
+   report = @silent;
+
+elseif strcmp(Verbosity, 'verbose')
+
+   report = @verbose;
+
+end
+
+% initialisation
+
+[ntp,d] = size(x);
+alpha   = zeros(ntp, 1);
+one     = ones(ntp, 1);
+K       = evaluate(kernel, x, x);
+eta     = zeros(ntp, 1);
+mu      = invlink(eta);
+L       = sum(loss(y,eta,mu,theta));
+
+report(OutputStream, format, 0, L);
+
+% get on with it!
+
+R = chol(K + 4*lambda*eye(ntp));
+
+for i=1:1000%MaxIter
+
+   w      = max(W(eta), 1e-6);
+   z      = eta + 4*(y - mu);
+   aleph1 = R\(R'\z);
+   eta1   = K*aleph1;
+   mu1    = invlink(eta1);
+   L_new1  = sum(loss(y,eta1,mu1,theta)) + 0.5*lambda*aleph1'*K*aleph1;
+   aleph2 = 2*aleph1 - alpha;
+   eta2   = K*aleph2;
+   mu2    = invlink(eta2);
+   L_new2 = sum(loss(y,eta2,mu2,theta)) + 0.5*lambda*aleph2'*K*aleph2;
+   c      = [0 0 1 ; 1 1 1 ; 4 2 1]\[L ; L_new1 ; L_new2];
+   gamma  = -0.5*c(2)/c(1);
+   alpha  = alpha + gamma*(aleph1 - alpha);
+   eta    = K*alpha;
+   mu     = invlink(eta);
+   L_new = sum(loss(y,eta,mu,theta)) + 0.5*lambda*alpha'*K*alpha;
+
+   report(OutputStream, format, i, L_new);
+
+   if abs(L_new - L) < TolFun
+
+      break;
+
+   end
+
+   L = L_new;
+
+end
+
+report(1);
+
+net = set(net, 'alpha', alpha, 'b', 0, 'x', x);
+
+if nargout > 1
+
+   % compute an approximate leave-one-out estimate of the loss
+
+   R   = chol(K + diag(lambda./w));
+   Ri  = inv(R);
+   ci  = sum(Ri.^2,2);
+   z   = eta + (y - mu)./w;
+   eta = z - alpha./ci;
+   mu  = invlink(eta);
+
+end
+
+function ethereal(fd, format, varargin)
+
+backspace = char(8);
+
+if nargin > 1
+
+   str = sprintf(format, varargin{:});
+
+else
+
+   str = repmat(' ', 79, 1);
+
+end
+
+fprintf(fd, '%s%s', str, repmat(backspace, size(str)));
+
+function verbose(fd, format, varargin)
+
+if nargin > 1
+
+   fprintf(fd, [format '\n'], varargin{:});
+
+end
+
+function silent(fd, format, varargin)
+
+% bye bye...
+

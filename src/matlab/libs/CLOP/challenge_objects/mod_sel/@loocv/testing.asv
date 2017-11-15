@@ -1,0 +1,6 @@
+function [retRes] = testing(algo,dat)
+
+% Does the da
+retRes= training(retAlgo,dat)
+
+

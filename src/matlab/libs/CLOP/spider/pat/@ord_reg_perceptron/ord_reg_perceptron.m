@@ -1,0 +1,83 @@
+function a = ord_reg_perceptron(Yset,hyper)    
+%=============================================================================
+% Ordinal Regression Perceptron  
+%=============================================================================  
+% a=ord_reg_perceptron(hyperParam) 
+% 
+% Generates a Ordinal Regression Perceptron (SP) object with given hyperparameters.
+%
+% The ordinal regression perceptron learns a discriminative
+% function f(x_i) = <w,x_i> such that 
+% d(rank(x_i),rank(x_j)) > eps -> |f(x_i)-f(x_j)| > |g(x_i,x_j) * tau|
+% where d is a distance controlling the level of insensivity and g is a
+% function controlling the learning margin between two examples with
+% different ranks (g = margin_control). 
+% New functions for d and g can be added to the end of training.m 
+% (see this file for examples).
+%
+%
+% As the number of candidates for each example might be large, the training
+% data is given as follows: 
+% X stores m times the base name (including path) of the file containing
+% the candidates. The actual files have a number which conincides with
+% the label Y. E.g. if X(i,:) = '../data/candidate', the corresponding
+% file would be ['../data/candidate' num2str(Y(i)) '.mat']. The name of the
+% variable in the file holding the feature vectors of the
+% candidates as row vectors is assumed to be "X".
+% ATTENTION: You have to give a name to your datasets as the first
+% parameter is interpreted as a name due to spider specification. If you do
+% not name your dataset spider will interpret the filenames as name of the
+% dataset.
+%
+% Hyperparameters (with defaults)
+% eps                  -- epsilon for epsilon insensitive rank distance (see also a.d)
+% tau=1                -- "margin" by which the candidates shall be
+%                         separated
+% loops=100            -- maximal number of iterations of training
+% margin_control = 'inverse_index_difference'
+%                      -- function to control the learning margin
+%                         default is g(p,q) = p^{-1} - q^{-1}
+% d = 'abs_rank_diff'  -- distance between two ranks
+%                      
+%
+% Model 
+%  alpha               -- the weights
+%  b                   -- the offset
+% Methods:
+%  train, test
+%
+% Example:
+% % Say you have 100 files with candidates in ../demos/data/toy_candidate with
+% % core name "candidate"
+% X = repmat(['../demos/data/toy_candidate/candidate'],100,1);
+% d = data('training',X,[1:100]')
+% a.eps = 30; 
+% [r a]=train(a,d);
+% 
+%
+%
+%=============================================================================
+% Reference : Discriminative Reranking for Machine Translation
+% Author    : Libin Shen, Anoop Sarkar and Franz Josef Och
+% Link      : http://www.sfu.ca/~anoop/papers/pdf/drmt.pdf
+%=============================================================================
+
+
+  
+  % model 
+  a.loops=100;
+  a.alpha=[];
+%   a.r = 1;
+%   a.k = 1;
+  a.tau = 1;
+  a.eps = 1;
+  a.margin_control = 'inverse_index_difference';
+  a.d = 'abs_rank_diff';
+  
+  
+  p=algorithm('ord_reg_perceptron');
+  a= class(a,'ord_reg_perceptron',p);
+ 
+  if nargin==2,
+    eval_hyper;
+  end;

@@ -1,0 +1,90 @@
+ADA MODEL 1
+
+no elimination
+
+my_prepro={standardize,shift_n_scale,normalize};
+my_neural = neural({'units=7', 'shrinkage=0.05' , 'balance=1' , 'maxiter=1000'});
+gauss_em_model = emGauss({'IterationsP=30','IterationsN=30','mixturesP=15','mixturesN=15'}); 
+bernoulli_em_model = emBernoulli({'IterationsP=40','IterationsN=40','mixturesP=10',...
+                                    'mixturesN=10','EliminatePriors=1e-10','testGivesProb=1'});
+em_model = emAll({gauss_em_model,bernoulli_em_model},{'testGivesProb=1'});            
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({my_prepro{:}, my_neural,bias});
+
+Training CV BER=18.93+- 1.12%
+
+
+Train = 17.429705 Valid = 18.824683
+
+
+------------------------------------------------------------------------------------------------
+ADA MODEL 2
+
+no elimination
+
+my_prepro={standardize,shift_n_scale,normalize};
+my_neural = neural({'units=15', 'shrinkage=0.05' , 'maxiter=1500','balance=0'});
+gauss_em_model = emGauss({'IterationsP=30','IterationsN=30','mixturesP=15','mixturesN=15'}); 
+bernoulli_em_model = emBernoulli({'IterationsP=40','IterationsN=40','mixturesP=10',...
+                                    'mixturesN=10','EliminatePriors=1e-10','testGivesProb=1'});
+em_model = emAll({gauss_em_model,bernoulli_em_model},{'testGivesProb=1'});            
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({em_model,AddToOne, my_neural,bias});
+
+Training CV BER=20.97+- 1.23%
+
+Train = 17.986132 Valid = 18.980271
+
+
+------------------------------------------------------------------------------------------------
+ADA MODEL 3
+
+no elimination
+
+my_prepro={standardize,shift_n_scale,normalize};
+my_neural = neural({'units=7', 'shrinkage=0.3' , 'balance=1' , 'maxiter=500'});
+gauss_em_model = emGauss({'IterationsP=30','IterationsN=30','mixturesP=15','mixturesN=15'}); 
+bernoulli_em_model = emBernoulli({'IterationsP=40','IterationsN=40','mixturesP=10',...
+                                    'mixturesN=10','EliminatePriors=1e-10','testGivesProb=1'});
+em_model = emAll({gauss_em_model,bernoulli_em_model},{'testGivesProb=1'});            
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({my_prepro{:}, my_neural,bias});
+
+Training CV BER=19.17+- 1.26%
+
+Train = 17.678940 Valid = 18.834018
+
+------------------------------------------------------------------------------------------------
+ADA MODEL 4
+
+my_prepro={standardize,shift_n_scale,normalize};
+my_neural = neural({'units=3', 'shrinkage=0.05' , 'balance=1' , 'maxiter=1000'});
+gauss_em_model = emGauss({'IterationsP=30','IterationsN=30','mixturesP=15','mixturesN=15'}); 
+bernoulli_em_model = emBernoulli({'IterationsP=40','IterationsN=40','mixturesP=10',...
+                                    'mixturesN=10','EliminatePriors=1e-10','testGivesProb=1'});
+em_model = emAll({gauss_em_model,bernoulli_em_model},{'testGivesProb=1'});            
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({my_prepro{:}, my_neural,bias});
+
+Training CV BER=19.30+- 0.69%
+
+Train = 16.968435 Valid = 17.405713
+
+------------------------------------------------------------------------------------------------
+ADA MODEL 5
+DataMatrix=elim_for_c(DataMatrix,1);
+
+my_prepro={standardize,shift_n_scale,normalize};
+my_neural = neural({'units=7', 'shrinkage=0.05' , 'maxiter=500','balance=0'});
+gauss_em_model = emGauss({'IterationsP=30','IterationsN=30','mixturesP=15','mixturesN=15'}); 
+bernoulli_em_model = emBernoulli({'IterationsP=40','IterationsN=40','mixturesP=10',...
+                                    'mixturesN=10','EliminatePriors=1e-10','testGivesProb=1'});
+em_model = emAll({gauss_em_model,bernoulli_em_model},{'testGivesProb=1'});            
+boost_model = gentleboost(my_neural , {'units=5'});
+base_model=chain({em_model,AddToOne, my_neural,bias});
+
+
+Training CV BER=21.05+- 1.43%
+
+
+Train = 19.006540 Valid = 20.106734

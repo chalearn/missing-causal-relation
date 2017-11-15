@@ -1,0 +1,184 @@
+October 2012
+------------
+We fixed a few bugs and renamed svcrfe  "xrfe" (can be combined with any classfier).
+Some added objects:
+- Spearman: filter using the Spearman correlation coefficient
+- rand_fs: random feature selection (to perform comparisons)
+- equalize: preprocessing that makes the distribution of value more even (close to replacing values by their rank.
+
+
+April 2009
+----------
+
+New challenge objects:
+
+basic:
+- the data obect has new methods for data visualization (display, scatter, show) and methods for computing ber and auc, and displaying roc, when data is a result object).
+
+clust:
+- Clustering methods (courtesy of Mehreen Saeed)
+
+feat_sel:
+- A few more feature selection methods
+
+functions:
+- a new function called "example" to test the learnig objects with a small 2d example (courtesy of Gavin Cawley)
+
+Previous version:
+================
+
+function
+-----------
+There are two new objects for model selection psmsx and patsms (H. Jair Escalante)
+There is a utility called "example" based on Gavin Cawley's code that allows us to visualize the solution of the various algorithms using the same example. For instance, type:
+example(gentleboost);
+example(lssvm({'degree=2'}));
+For classifiers returning probablistic outputs, one can try option 1 to display probabilities:
+example(klogistic, 1);
+
+pat
+----
+
+* rf: Code based on the R implementation used by Corinne Dahinden.
+
+* Logistic regression
+
+- The logitboost object call Roman Lutz code in R. Roman Lutz uses 4000 trees, but this implementation crashes with too many trees.
+- The object klogistic merges code from the Matlab logistic regression implementation and Gavin Cawley's code.
+It has 2 options: option=1 calls the Matlab library and performs linear logistic regression; option=2 calls Gavin's code with default HP. 
+- Logistic regression calls for 0/1 target values and returns probabilities between 0 and 1 while CLOP expects +-1 targets and discriminant pos/neg values. Hence the +-1 input are converted to 0/1 and the probabilitic outputs turned into values ranging between -1 and +1 by affine scaling.
+
+* Ridge regression
+We have 3 versions:
+- kridge: the original CLOP version. Shrinkage can be set to [] and the algorithm optimizes it automatically.
+- lssvm: object based on code of Gavin Cawley from 2006. The HP can be set to [] as arguments and then the algorithm optimizes them automatically.
+- gkridge: generalized kernel ridge regression, based on code of Gavin Cawley from 2008 (with a lame interface not allowing to change hyperparameters)
+We eventually need to merge them or decide which one to use.
+There is somthing bizarre with gkridge: while LSSVM works well on Sylva, gkridge gives bizarre results. In general I find LSSVM to be faster and work better.
+
+feat_sel
+--------
+There are a couple more feature selection methods
+
+Q&A to Gavin Cawley:
+================
+A few questions:
+> - what did you do in terms of preprocessing? did it matter?
+
+
+Basically all I have done is standardise the continuous variables for zero
+mean and unit variance.  However as usual I use 100-fold repeated holdout
+for performance evaluation and then use the average of the 100 networks for
+making predictions (takes ages!).  The best kernel so far seems to be a
+linear one.
+
+
+> - are KLR and KRR completely hyper-parameter free? is there a kernel 
+> choice or is this determined internally?
+
+
+The model selection is performed automatically, but if you want to change
+the kernel you have to change it in the constructor.  What I wanted to do
+was to have a gkm object and a selector object passed in as the parameters
+of the spider object, so that you could set up the model the way you wanted
+it before training, but I can't work out how spider handles the
+hyperparameters.  
+
+
+> - I thought you used an ARD prior in the challenge, is this included in 
+> krr and klr?
+
+
+I haven't used it yet as the datasets are quite large (and a linear kernel
+is working so well), all you need to do is to set eta to be a vector with
+as many elements as there are input features and you will get an ARD
+kernel.  However the computation takes so long that it isn't usually worth
+it.  I am working on a gradient descent optimiser for the toolbox which
+would be better (that is one of the best things about challenges, it is a
+great excuse to get coding ;o).
+
+
+> - is krr the same as LSSVM (the code you sent me 2 years ago?)
+
+
+Yes, KRR is basically the same as LSSVM, although I have probably improved
+the numerical side a little since then.  I also have optimally regularised
+KRR (uses the old statisticians trick to optimise the ridge parameter in
+canonical form, basically for free).  This is really handy with the linear
+kernel as no further model selection is required.  For datasets with more
+patterns  than features I have also added @rr, which is ridge regression
+with an unregularised bias parameter (to exactly match a linear KRR).
+ 
+
+
+model_sel
+---------------
+
+Model selection includes now the @psms object of Hugo Jair Escalante Balderas
+todo: 
+- make a version of psms where one can choose which model to include and the HP range. This could be inspired by the object @grid_sel of the spider.
+- it would be great to include other model selection objects (random search? pattern search?)
+
+* Bugs:
+=====
+1) naive Bayes seems to have a wrong bias value. It is corrected by chain({naive, bias});
+
+1) RF died in Nova
+------------------
+
+2) LB is very slow on Hiva and Nova (too many features)
+-------------------------------------------------------
+
+3) clust
+-----------
+
+The code of Mehreen Saeed was put "as is" in:
+CLOP/challenge_objects/clust
+
+The following small tests were ran (without success):
+
+% Continuous data 
+D=data(randn(100,100), repmat([1 1 1 1 1 -1 -1 -1 -1 -1]',10,1));
+[dd,mm]=train(emGauss, D);
+[dd,mm]=train(remGauss, D);
+
+% Binary data (must be 0/1)
+D=data((sign(randn(100,100))+1)/2, repmat([1 1 1 1 1 -1 -1 -1 -1 -1]',10,1));
+[dd,mm]=train(emBernoulli, D);
+[dd,mm]=train(remBernoulli, D);
+
+%emAll
+
+mod_sel:
+- model selection objects including PSMS (courtesy of H.J. Escalante).
+
+packages:
+- new gkm package of Gavin Cawley (interfaced as gkridge)
+
+pat:
+- a few new objects:
+active: active learning (to handle large datasets by repeatedly learning of a "active set")
+gkridge: an interface to G. Cawley's code.
+klogistic: logistic regression (linear uses Matlab statistics toolbox and non-linear uses G. Cawley's code).
+
+prepro:
+- quite a few preprocessing objects, notably for KDD cup
+code_categorical: code string categorical variables as numbers
+missing: fills in missing values.
+
+CLOP Version 1.1 -- October, 2006
+
+This is a list of changes from previous releases of CLOP. If you found bugs and/or want to help with improving CLOP, please write to: agnostic@clopinet.com
+==============================================================================
+
+Compared to the beta version:
+- gentleboost was added
+- the "bias" object was added to post-fit the bias to optimize the BER
+- automatic adjustment of the shrinkage for kridge was added
+- code to check whether a model is a valid CLOP model was added
+- several options were added to main.m (cross-validation, not load test data while training)
+- model_example.m was upgraded
+
+Compared to version 1.0, May 2006
+- The random forest (rf) object now uses the R engine.
+

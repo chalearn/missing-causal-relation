@@ -1,0 +1,46 @@
+function [dat, alg] =  training(alg,dat)
+%[dat, alg] =  training(alg,dat)
+% Compute the ranking criterion for the data 
+% using bagging of feature selection
+% Returns the training data matrix dat restricted to the
+% selected features (i.e. feat_num<=feat_max and w>w_min.
+
+% Isabelle Guyon -- isabelle@clopinet.com -- February 2009
+  
+if alg.algorithm.verbosity>0
+    disp(['training ' get_name(alg) '... '])
+end
+
+[p,n]=get_dim(dat);
+
+% Remove limits on the number of features 
+alg.child.f_max=Inf;
+alg.child.w_min=-Inf;
+
+% compute ranking
+sample_num=round(a.frac_sub*p);
+R=zeros(child_num, n); % Matrix of all ranks
+for k=1:a.child_num
+    [dt, alg.child]=train(chain({subsample(['p_max=' num2str(sample_num)]), alg.child}), dat);
+    clear dt
+    fidx=get_fidx(alg.child); 
+    R(k, fidx)=1:n;
+end
+
+alg.W=get_w(alg.child); 
+alg.
+
+
+
+% Limit the number of features as desired
+alg.child.f_max=alg.f_max;
+alg.child.w_min=alg.w_min;
+
+if ~alg.algorithm.do_not_evaluate_training_error
+    dat=test(alg, dat);
+end  
+
+  
+
+  
+  

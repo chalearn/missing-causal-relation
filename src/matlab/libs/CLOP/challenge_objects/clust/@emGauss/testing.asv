@@ -1,0 +1,56 @@
+function dat  =  testing(algo,dat)
+% if algo.testGivesProb then it means the test routine will
+% output log prob of instances in each mixture
+
+if (algo.testGivesProb)
+   dat = GetLogProb(algo,dat);
+   return;
+end
+% IMPORTANT we are assuming diagonal cov. matrices
+
+%get the prob matrix for the instances
+Prob = GetLogProb(algo,dat);
+
+%make the overall mixture probabilities in +ve and -ve class
+MixProbPos = Prob[:,1:algo.mixturesP];
+MixProbNeg = MixProbNeg + MixProbZeroNeg;
+
+%now add the priors
+for i=1:1:algo.mixturesP
+    MixProbPos(:,i) = MixProbPos(:,i)+PriorP(i);
+end
+
+for i=1:1:algo.mixturesN
+    MixProbNeg(:,i) = MixProbNeg(:,i)+PriorN(i);
+end
+
+%now see which class has max prob...
+%prior of individual classes
+
+%bring them back to absolute scale
+MixProbPos = 10.^(MixProbPos);
+MixProbNeg = 10.^(MixProbNeg);
+%now take the sum along each row & multiply by class prob
+Pos = sum(MixProbPos')*algo.PosPrior;
+Neg = sum(MixProbNeg')*algo.NegPrior;
+
+tempN = Neg > Pos;
+tempN = (Neg .* tempN) * -1;    % will have -ve prob values for -ve classification & 0 for +ve class
+tempP = Pos > Neg;              % will have +ve prob values for +ve classification & 0 for +ve class
+tempP = (Pos .* tempP); 
+yEst = tempP + tempN;
+%yEst = Pos - Neg;
+yEst = yEst';
+dat=set_x(dat,yEst); 
+dat=set_name(dat,[get_name(dat) ' -> ' get_name(algo)]); 
+
+
+%{
+%now we can classify
+yEst = Neg > Pos;
+yEst = yEst*-2; %this will put a -2 for -ve class & 0 for +ve
+yEst = yEst+1;  %this will put a -1 for -ve class & 1 for +ve
+yEst = yEst';
+dat=set_x(dat,yEst); 
+dat=set_name(dat,[get_name(dat) ' -> ' get_name(algo)]); 
+%}

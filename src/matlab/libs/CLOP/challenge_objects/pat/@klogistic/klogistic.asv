@@ -1,0 +1,85 @@
+
+function a = klogistic(hyper) 
+%=============================================================================
+% KERNEL LOGISTIC regression classifier object             
+%=============================================================================  
+% a=klogistic(hyperParam) 
+%
+% This is an interface to Gavin Cawley's logistic regression machine "klr"
+% and to Matlab's logistic regression code.
+% Generates a kernel logistic regression object no hyperparameter.
+%
+% Option: 1 linear of 2 non-linear
+% Currently option 1 calls the Matlab optimizer and 2 Gavin Cawley's code.
+%
+%   Model (linear case, Matlab optimizer)
+%    W                   -- the weights
+%    b0                  -- the bias
+%   Model (gkm)
+%    gkm
+%    selector
+%
+% Methods:
+%  train, test, default, get_w 
+%
+%=============================================================================
+% References :   matlab implementation uses  and 
+% G. C. Cawley, G. J. Janacek, and N. L. C. Talbot. Generalised kernel machines. In Proceedings of the
+% IEEE/INNS International Joint Conference on Neural Networks (IJCNN-07), pages 1732–1737, Orlando,
+% Florida, USA, August 12–17 2007.
+% Interface: Isabelle Guyon -- isabelle@clopinet.com -- October 2007; April
+% 2008
+%=============================================================================
+
+% <<------hyperparam initialisation------------->> 
+a.display_fields={'option'};
+
+a.option=    default(1, {1, 2});
+
+optimizer1='matlab';
+optimizer2='gkm';% Choose 'matlab' for the simple linear logistic regression 
+                    % or 'gkm' for the GENERALIZED KERNEL METHODS of Gavin
+                    % Cawley
+optimizer3='liblinear';
+
+% <<------ Private data members ------------->> 
+a.IamCLOP=1;
+a.input_type=0; % 0 for 0/1, 1 for +-1
+
+% <<-------------model----------------->> 
+a.optimizer=[]; 
+a.gkm=[];
+a.selector=[];
+a.b0=0;
+a.W=[];
+
+algoType=algorithm('klogistic');
+a= class(a,'klogistic',algoType);
+
+a.algorithm.do_not_evaluate_training_error=0; 
+a.algorithm.use_signed_output=0; % Return the discriminant values
+a.algorithm.verbosity=1;
+
+eval_hyper;
+ 
+switch(a.option)
+        case 1
+    a.optimizer=optimizer1; 
+        case 2
+    a.optimizer=optimizer2; 
+        otherwise
+    a.optimizer=optimizer3; 
+end
+
+% <<-------------model----------------->> 
+if strcmp(a.optimizer, 'gkm')
+    a.gkm      = klr('Verbosity', 'ethereal');
+    a.selector = simplex;
+end
+ 
+ 
+
+
+
+
+

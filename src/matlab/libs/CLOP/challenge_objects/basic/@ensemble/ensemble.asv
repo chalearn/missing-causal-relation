@@ -1,0 +1,75 @@
+
+function a = ensemble(in_array, hyper) 
+
+%===========================================================================   
+% ENSEMBLE ensemble object
+%===========================================================================  
+%  A=ENSEMBLE(in_array, hyper) returns an ensemble object initialized with 
+%  a cell array of algorithms in_array.  
+% 
+%  in_array -- an array of learning objects.
+%  hyper -- hyperparameters 
+%               use_signed_output (0/1)
+%               
+%
+%  This is used to create an ensemble of algorithms.
+%  The training method should be user refined (overloaded): 
+%  By default, the data gets passed to all the models, which get trained.
+%  The models then vote with a weight of 1 and a zero bias.
+
+%===========================================================================
+% Author    :   Isabelle Guyon -- isabelle@clopinet.com -- October 2005
+% Inspired by the group object of the spider.
+%===========================================================================
+
+a.IamCLOP=1;
+
+% Hyperparameters
+a.display_fields={'signed_output'};
+a.signed_output=default(0, {0, 1});
+
+a.child=[];
+
+if nargin>0
+    if ~iscell(in_array)       
+        if ischar(in_array)
+            % The first argument is in fact a hyperparameter string
+            hyper=in_array;
+        else
+            % The first argument is a single learning object
+            a.child{1}=in_array; 
+        end
+    else
+        % determine whether a hyperparameter array is passed
+        hp=0;
+        for k=1:length(in_array)
+            if ischar(in_array{k})
+                hp=1;
+            end
+        end
+        if hp
+            hyper=in_array;
+        else
+            a.child=in_array; 
+        end
+    end
+end
+
+% Model parameters
+a.W=[];
+a.b0=[];
+
+name='ensemble';   
+p=algorithm(name); 
+a= class(a,name,p);
+
+a.algorithm.do_not_evaluate_training_error=0; 
+a.algorithm.use_signed_output=0; % Return the discriminant values
+a.algorithm.verbosity=1;
+
+eval_hyper;
+
+% New: IG -- to save time
+for i=1:length(a.child) 
+  a.child{i}.algorithm.do_not_evaluate_training_error=1;
+end

@@ -1,0 +1,76 @@
+function a = emAll(in,hyper) 
+%=============================================================================
+% Expectation maximization object for learning bernoulli mixtures             
+% for binary data and learning gaussian mixtures for cont data 
+% written by Mehreen Saeed 08 June, 2007. FAST NUCES
+%=============================================================================  
+% a=em(hyperParam) 
+%
+% Generates an em object for guassian mixture models with given hyperparameters.
+% IMPORTANT the covariance matrices are diagonal cov. matrices
+%
+%   Hyperparameters (with defaults)
+%   testGivesProb     -- indicates whether test routine should return prob
+% Models
+%   bernoulli         -- rem model for bernoulli
+%   gauss             -- em model for gaussian dist 
+% Methods:
+%  train, test,         -- self explanatory
+%    GetLogProb         -- get the log of prob matrix of instances with
+%                           prob of mixtures
+%
+% Example:
+%
+% to be written
+%
+%=============================================================================
+% Reference : to be added
+%
+%=============================================================================
+
+  %<<------hyperparam initialisation------------->> 
+  a.testGivesProb = 0; 
+  a.bernoulli = remBernoulli;
+  a.gauss = emGauss;
+  
+ if nargin == 0, in = {}; 
+ end
+  
+  a.child={};
+  if ~iscell(in)       
+    if ischar(in)
+        % The first argument is in fact a hyperparameter string
+        hyper=in;
+    else
+        % The first argument is a single learning object
+        a.child{1}=in; 
+    end
+  else
+    % determine whether a hyperparameter array is passed
+    hp=0;
+    for k=1:length(in)
+        if ischar(in{k})
+            hp=1;
+        end
+    end
+    if hp
+        hyper=in;
+    else
+        a.child=in; 
+    end
+  end
+ 
+  % <<-------------model----------------->> 
+  
+  for k=1:length(in)
+        if isa(in{k},'emGauss')
+            a.gauss = in{k};
+        elseif isa(in{k},'emBernoulli')
+                a.bernoulli = in{k};
+        end
+ end
+    
+  algoType=algorithm('emAll');
+  a= class(a,'emAll',algoType);
+  
+ eval_hyper;

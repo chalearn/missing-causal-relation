@@ -1,0 +1,19 @@
+function [retRes,retAlgo] = training(retAlgo,dat)
+  
+  if retAlgo.algorithm.verbosity
+    disp(['training ' get_name(retAlgo) '.... '])
+  end
+  
+X=get_x(dat);
+Y=get_Y(dat);
+retRes=[];
+
+for k=1:n
+    tr=[1:k-1,k+1:n]
+    te=k;
+    Dtr=data(X(tr,:),Y(tr));
+    Dte=data(X(te,:),Y(te));
+    [d, m]=train(retAlgo, Dtr);
+    dd=test(m, Dte);
+    retRes(k)=dd.X;
+end

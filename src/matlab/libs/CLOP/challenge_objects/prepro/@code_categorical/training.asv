@@ -1,0 +1,65 @@
+function [retDat,algo] =  training(algo,retDat)
+%[retDat,algo] =  training(algo,retDat)
+% Train a code_categorical value preprocessor.
+% Inputs:
+% algo -- A "code_categorical" object.
+% retDat -- A training data object.
+% Returns:
+% retDat -- Preprocessed datalgo.
+% algo -- The parameters of the preprocessing.
+
+% Isabelle Guyon -- February 2009 -- isabelle@clopinet.com
+
+if algo.algorithm.verbosity>0
+    disp(['training ' get_name(algo) '... '])
+end
+
+X=get_x(retDat);
+Y=get_y(retDat); 
+[p,n]=size(X);
+ncat=length(algo.cate_idx);
+
+fprintf('Finding unique categories\n');
+
+if ~ncat
+    fprintf('Detecting categorical variables based abscence of NaN and on number of unique values\n');
+    gidx=setdiff(1:n, find(any(isnan(SMtr.X))));
+    Xg=X(:,gidx);
+    ng
+    L=[];
+    for k=1:n, uval{k}=unique(X(:,k)); end
+    for k=1:n, L(k)=length(uval{k}); end
+    algo.cate_idx=find(L<p/10);
+    uval=uval(algo.cate_idx);
+    ncat=length(algo.cate_idx);
+else
+    for k=1:ncat, 
+        j=algo.cate_idx(k);
+        uval{k}=unique(X(:,j)); 
+    end
+end
+
+fprintf('Map categories to meaningful numeric values\n');
+for k=1:ncat % loop over categorical variables
+    u=uval{k};
+    code=[];
+    j=algo.cate_idx(k);
+    for i=1:length(u) % loop over categories
+        if u(i)~=0 % those are missing values
+            code(u(i))=mean(Y(find(X(:,j)==u(i))));
+        end
+    end
+    algo.code_array{k}=code;
+end
+
+retDat=test(algo,retDat);
+
+        
+
+
+
+
+
+
+
+

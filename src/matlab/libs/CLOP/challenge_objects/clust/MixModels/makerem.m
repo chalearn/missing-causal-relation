@@ -1,0 +1,1 @@
+mex -g librem.cpp -g em.cpp -g rem.cpp -g mexarg.cpp -g matrices.cpp -g lu.cpp -g bmp_io.cpp -g remsparse.cpp

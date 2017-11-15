@@ -1,0 +1,96 @@
+function dat  =  testing(algo,dat)
+% if algo.testGivesProb then it means the test routine will
+% output log prob of instances in each mixture
+
+%first make sure we have only binary features
+if ~strcmp(algo.FeatureType,'binary')
+    dat = bin_features(algo,dat);
+end
+
+
+if (algo.testGivesProb)
+   dat = GetLogProb(algo,dat);
+   return;
+end
+
+% find the corresponding prob of an instance in each class
+x = get_x(dat);
+[Examples Features] = size(x);
+
+%convert the prob to log scale .. these are prob of ones
+ProbP = log10(algo.probP);
+ProbN = log10(algo.probN);
+
+%convert the prob to log scale .. these are prob of zeros
+ProbZeroP = log10(1-algo.probP);
+ProbZeroN = log10(1-algo.probN);
+
+%log scale of priors of each mixture
+PriorP = log10(algo.priorP);
+PriorN = log10(algo.priorN);
+
+%this matrix will have log prob of each instance w.r.t a mixture
+%for the ones
+MixProbPos = x*ProbP';
+MixProbNeg = x*ProbN';
+%this matrix will have log prob of each instance w.r.t a mixture
+%for the zeros
+MixProbZeroPos = (~x)*ProbZeroP';
+MixProbZeroNeg = (~x)*ProbZeroN';
+
+%now make the overall mixture probabilities
+MixProbPos = MixProbPos + MixProbZeroPos;
+MixProbNeg = MixProbNeg + MixProbZeroNeg;
+
+%now add the priors
+for i=1:1:algo.mixturesP
+    MixProbPos(:,i) = MixProbPos(:,i)+PriorP(i);
+end
+
+for i=1:1:algo.mixturesN
+    MixProbNeg(:,i) = MixProbNeg(:,i)+PriorN(i);
+end
+
+%now see which class has max prob...
+%prior of individual classes
+
+%bring them back to absolute scale
+MixProbPos = 10.^(MixProbPos);
+MixProbNeg = 10.^(MixProbNeg);
+
+%now take the sum along each row & multiply by class prob if more than one
+%mixture distributions
+if (algo.mixturesP > 1)
+    Pos = sum(MixProbPos')*algo.PosPrior;
+else
+    Pos = MixProbPos*algo.PosPrior;
+    Pos = Pos';
+end
+
+if (algo.mixturesN > 1)
+    Neg = sum(MixProbNeg')*algo.NegPrior;
+else
+    Neg = MixProbNeg*algo.NegPrior;
+    Neg = Neg';
+end
+
+%tempN = Neg > Pos;
+%tempN = (Neg .* tempN) * -1;    % will have -ve prob values for -ve classification & 0 for +ve class
+%tempP = Pos > Neg;              % will have +ve prob values for +ve classification & 0 for +ve class
+%tempP = (Pos .* tempP); 
+%yEst = tempP + tempN;
+yEst = Pos - Neg;
+yEst = yEst';
+dat=set_x(dat,yEst); 
+dat=set_name(dat,[get_name(dat) ' -> ' get_name(algo)]); 
+
+
+%{
+%now we can classify
+yEst = Neg > Pos;
+yEst = yEst*-2; %this will put a -2 for -ve class & 0 for +ve
+yEst = yEst+1;  %this will put a -1 for -ve class & 1 for +ve
+yEst = yEst';
+dat=set_x(dat,yEst); 
+dat=set_name(dat,[get_name(dat) ' -> ' get_name(algo)]); 
+%}

@@ -1,0 +1,81 @@
+function a = rbfnet(hyper) 
+%==========================================================================
+% Radial Basis Function Network object             
+%==========================================================================
+% a=rbfnet(hyperParam) 
+%
+% Generates an rbfnet object with given hyperparameters. The used basis
+% functions are exp(-gamma*||x-z_i||)  where gamma and z_i can be optimized
+%
+%
+%   Hyperparameters (with defaults)
+%   nr_of_centers=1      -- the number of centers to be used
+%   init_with_kmeans=0   -- the centers are initialized with a kmeans 
+%   fixgamma=0           -- the variance is fixed. model parameter gamma
+%                           is used
+%   maxiter=2000         -- number of maximal iterations
+%   eps = 0              -- stopping criteria
+% 
+%   Model
+%    centers               -- the centers used for basis functions
+%    gamma                 -- estimated 1/2*variance^2 parameter
+%    alpha                 -- final coefficients
+%
+% Methods:
+%  train, test
+%
+% Example:
+% % Estimate Sinc Function  with Rbfnet and Bagged Rbfnet
+%t=[-5:0.29:5]';
+%ttest=[-5:0.06:5]';
+%y=sin(t)./t+1e-2*randn(length(t),1);
+%ytest=sin(ttest)./ttest+1e-1*randn(length(ttest),1);
+%
+%d=data(t,y)
+%dtest=data(ttest,ytest)
+%
+%rbn=rbfnet('nr_of_centers=3');
+%rbn.fixgamma=0; rbn.gamma=1e-3; rbn.eps=1e-5; rbn.init_with_kmeans =0;
+%rbn.maxiter=500; rbn.algorithm.use_signed_output=0;
+%a0=bagging(rbn,'bags=3');
+%a0.algorithm.use_signed_output=0;
+%[r,a]=train(group({rbn,a0}),d)
+%a1=a.child{1}; % this was the rbf net 
+%r=test(a1,dtest);
+%hold on;
+%plot(ttest,ytest,'.')
+%plot(ttest,r.X,'ro-'); 
+%loss(r,'quadratic_loss')
+%a2=a.child{2}; % this was the bagged rbf net
+%r=test(a2,dtest); 
+%plot(ttest,r.X,'b+-');  loss(r,'quadratic_loss')
+%legend({'true','Rbf','Bagged RBF'})
+%plot(a1.centers,a.centers*0,'rx')
+%=============================================================================
+% Reference : Neural Networks
+% Author    : Chris Bishop
+% Link      : -
+%=============================================================================
+   
+
+
+  a.nr_of_centers=1;
+  a.init_with_kmeans=0;
+  a.fixgamma=0;
+  a.maxiter=2000;
+  a.eps=1e-5;
+  
+% model
+  a.centers=[];
+  a.gamma=[];
+  a.alpha=[];
+  
+  p=algorithm('rbfnet');
+  a= class(a,'rbfnet',p);
+
+  a.algorithm.alias={'k','nr_of_centers'}; % kernel aliases
+ 
+  if nargin==1,
+    eval_hyper;
+  end;
+  

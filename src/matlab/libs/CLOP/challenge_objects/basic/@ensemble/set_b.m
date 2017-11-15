@@ -1,0 +1,4 @@
+function a=set_b(a, W)
+%set_b(a, W)
+
+a.b0=b;

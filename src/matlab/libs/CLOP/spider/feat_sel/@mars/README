@@ -1,0 +1,19 @@
+
+This is a template object, copying this directory and editing it should
+make it easy to create new objects. It implements a simple SVM for
+pattern recognition. 
+The files are the following:
+
+template.m % constructor -- needs to include all hyperparameter and model 
+           %                parameter declarations
+
+training.m % these two files are the core of any object -- they train
+testing.m  % the algorithm given data and test the learnt model
+
+get_name % used for printing the name, you only need to edit this file
+         % if you want to output special hyperparameters of your object
+         % when the name is printed out
+
+get.m % used for getting parameters, you do not need to edit this file
+
+set.m % used for setting parameters, you do not need to edit this file

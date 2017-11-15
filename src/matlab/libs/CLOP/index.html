@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>CLOP</title>
+      
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+</head>
+  <body text="#000000" bgcolor="#ccccff" link="#000099" vlink="#990099"
+ alink="#000099">
+ 
+<blockquote>   
+  <blockquote>     
+    <blockquote>       
+      <blockquote>         
+        <blockquote>           
+          <blockquote>             
+            <blockquote>               
+              <blockquote>                 
+                <table cellpadding="2" cellspacing="2" border="50"
+ width="30%" align="center">
+                   <tbody>
+                     <tr>
+                       <td valign="top" bgcolor="#000099" align="center"><font
+ color="#ffffff"><b><big><big><big><big><big><big>CLOP</big></big></big></big></big></big></b></font></td>
+                     </tr>
+                   
+                  </tbody>                 
+                </table>
+               </blockquote>
+             </blockquote>
+           </blockquote>
+         </blockquote>
+       </blockquote>
+     </blockquote>
+   </blockquote>
+ </blockquote>
+ <br>
+ <b>What is CLOP?</b><br>
+ CLOP stands for <i><b>Challenge Learning Object Package</b></i>. It is an 
+object-oriented Matlab(R) Machine Learning package. CLOP is based on the <a
+ href="http://www.kyb.tuebingen.mpg.de/bs/people/spider/">Spider</a> developed 
+at the Max Planck Institute for Biological Cybernetics and integrates software 
+from several sources, see the <a
+ href="http://www.agnostic.inf.ethz.ch/credits.php">credits</a>. It was developed 
+to support <a href="http://clopinet.com/challenges/">challenges in Machine 
+Learning</a>, and it includes the best working methods from these challenges, 
+in addition to the Spider library. You can also access from CLOP Weka and 
+R functions.<br>
+ CLOP and the Spider are built on two simple abstractions: <b>data</b> and 
+<b>algorithm</b>. Once you load some data matrix X and target vector Y and 
+create a data object:<br>
+ <b><font color="#990000">&nbsp;&nbsp;&nbsp; &gt; training_data = data(X, 
+Y);</font></b><br>
+ You just need to instanciate an algorithm, say a Support Vector Classifier 
+(<b>svc</b>):<br>
+ <b><font color="#990000">&nbsp;&nbsp;&nbsp; &gt; my_svc = svc;</font></b><br>
+ Then you train it by calling the method <b>train</b> (in Matlab, functions, 
+which have an object as their first argument are methods of that object):<br>
+ <b>&nbsp;&nbsp;&nbsp; <font color="#990000">[training_resu, trained_svc] 
+= train(my_svc, training_data);</font></b><br>
+ The object resu contained the predictions on training data. The trained
+model may then be tested with the method <b>test</b> on test_data<br>
+ <b>&nbsp;&nbsp;&nbsp; <font color="#990000">test_resu = test(trained_svc, 
+test_data);</font></b><br>
+ Compound models can be built by chaining algorithms, including preprocessing, 
+predictors, and postprocessing and/or building ensembles of models voting 
+towards the final decision. The resulting compound model is then trained and
+tested by calling train and test; it knows how to train and test itself by
+calling the train and test methods of its components.<br>
+ <br>
+ <b>Download CLOP</b><br>
+ Before you download CLOP, please make sure you <b>read the <a
+ href="http://www.agnostic.inf.ethz.ch/license.txt">license agreement</a> 
+and the <a href="http://www.agnostic.inf.ethz.ch/disclaimer.php">disclaimer</a></b>. 
+<br>
+ There are several versions of CLOP. We recommend you <b>download the last 
+one</b>:<br>
+ <br>
+ 
+<table cellpadding="2" cellspacing="2" border="1" width="400"
+ align="center">
+   <tbody>
+     <tr>
+       <td valign="top" align="center"><b>Last version: </b><a
+ href="http://clopinet.com/isabelle/Projects/KDDcup09/CLOP_v1.6.zip">KDD
+cup version</a> v1.6 (April 2009)<br>
+       </td>
+     </tr>
+   
+  </tbody> 
+</table>
+ 
+<ul>
+   <li>MLSS 2008 version: <a
+ href="http://clopinet.com/CLOP/Clop_v1.5.zip">CLOP version 1.5</a> (August
+2008)</li>
+  <li>Bootcamp Vilanova version: <a
+ href="http://clopinet.com/isabelle/Projects/Vilanova/CLOPv1_2.zip">CLOP version
+1.2</a><b> </b>(July 2007)<br>
+  </li>
+  <li>ALvsPK challenge version: <a
+ href="http://clopinet.com/CLOP/Clop.zip">CLOP version 1.1</a> (October 2006)</li>
+   <li>Performance prediction challenge: <a
+ href="http://clopinet.com/isabelle/Projects/modelselect/Clop.zip">CLOP beta 
+version</a> (October 2005)</li>
+   <li>Book on feature selection version: <a
+ href="http://clopinet.com/isabelle/Projects/ETH/clopinet.com/isabelle/Projects/NIPS2003/DataNcode.zip">Featbook 
+version</a> (April 2005)</li>
+ 
+</ul>
+ <b>Installation instructions</b><br>
+ ==&gt; Windows users will just have to run a script to set the Matlab path 
+properly to use most functions. <br>
+ ==&gt; Unix users will have to compile the LibSVM package if they want to 
+use support vector machines. Please use the <a
+ href="http://clopinet.com/isabelle/Projects/Vilanova/Makefile_amir">latest 
+Makefile</a>.<br>
+ ==&gt; All users will have to install R to use random forests (RF and RFFS). 
+Make sure you remove and file named Clop/challenge_objects/packages/Rlink/__Rpath. 
+When you first start RF or RFFS, you will be prompted for the path of the 
+R executable. <br>
+ <br>
+ <b>CLOP documentation</b><br>
+ 
+<ul>
+   <li><b><a href="NIPS07_slide%20show.ppt">Introductory powerpoint slide 
+show</a></b></li>
+   <li><b><a href="QuickStart.pdf">CLOP QuickStart guide</a></b></li>
+   <li><b><a
+ href="http://clopinet.com/isabelle/Projects/agnostic/MFAQ.html">ALvsPK challenge, 
+learning object FAQ</a></b></li>
+   <li><a href="http://dx.doi.org/10.1016/j.patrec.2007.02.014"><i><b>Competitive 
+baseline methods set new standards for the NIPS 2003 feature selection benchmark</b></i></a>, 
+I. Guyon, J. Li, T. Mader, P. A. Pletscher, G. Schneider and M. Uhr, Pattern 
+Recognition Letters, Vol. 28:12, Sept. 2007, Pages 1438-1444. [<a
+ href="http://clopinet.com/isabelle/Projects/ETH/TM-fextract-class.pdf">pdf 
+of larger techreport</a>].</li>
+   <li><a href="http://clopinet.com/fextract-book/"><i><b>Feature Extraction, 
+Foundations and Applications</b></i></a>, &nbsp;Isabelle Guyon, Steve Gunn, 
+Masoud Nikravesh, and Lofti Zadeh, Editors. <br>
+ Series Studies in Fuzziness and Soft Computing, Physica-Verlag, Springer, 
+2006.<br>
+   </li>
+ 
+</ul>
+ <b>Tutorials and teaching material</b><br>
+ 
+<ul>
+   <li><b><a href="http://clopinet.com/isabelle/Projects/MLSS08/">Machine
+learning summer school</a></b>, MLSS 2008, (6 hours of class and 3 labs),
+Ile de Re, France, September 2008. <br>
+  </li>
+  <li><b><a href="http://clopinet.com/isabelle/Projects/IJCNN07/">Feature 
+selection tutorial</a></b>, IJCNN 07, Orlando, Florida, August 2007.</li>
+   <li><b><a href="http://clopinet.com/isabelle/Projects/Vilanova/">Feature 
+selection course</a></b> (6 hour class), Pascal bootcamp, Vilanova, Spain, 
+July 2007. <a href="http://videolectures.net/bootcamp07_vilanova/">Video of
+the class</a>.</li>
+   <li><b><a href="http://clopinet.com/isabelle/Projects/ETH/">Feature extraction 
+course</a></b> (14 week class), ETH Zurich, Winter semester 2005/2006.</li>
+ 
+</ul>
+ <b>Benchmarks and challenge data</b><br>
+ 
+<ul>
+   <li><b><a
+ href="http://clopinet.com/isabelle/Projects/ETH/Feature_Selection_w_CLOP.html">Feature 
+selection with CLOP</a></b> (reproducing the results of the NIPS03 feature 
+selection challenge). Datasets of the challenge.</li>
+   <li><a href="http://clopinet.com/isabelle/Projects/modelselect/"><b>Performance 
+prediction challenge</b> (WCCI 06)</a>. Used same datasets as the ALvsPK challenge
+(up to data reshuffling).</li>
+   <li><a href="http://clopinet.com/isabelle/Projects/NIPS2006/"><b>Model 
+selection game</b> (NIPS 06)</a>. Used the datasets of the ALvsPK challenge.</li>
+   <li><a href="http://clopinet.com/isabelle/Projects/agnostic/"><b>ALvsPK 
+challenge</b> (WCCI 07).</a> <a
+ href="http://www.agnostic.inf.ethz.ch/datasets.php">Datasets of the challenge</a>.</li>
+  <li><b><a href="http://clopinet.com/causality">Causality challenges</a></b>
+(WCCI08, NIPS08). Some participants used CLOP.</li>
+  <li><b><a href="http://www.kddcup-orange.com/">KDD cup 2009</a></b>. CLOP
+sample code provided.<br>
+  </li>
+ 
+</ul>
+ <br>
+ <br>
+</body>
+</html>

@@ -1,0 +1,57 @@
+BODY {
+	BACKGROUND-COLOR: white
+}
+A:link {
+	FONT-WEIGHT: bold; BACKGROUND: none transparent scroll repeat 0% 0%; COLOR: #003366; TEXT-DECORATION: underline
+}
+A:visited {
+	FONT-WEIGHT: bold; BACKGROUND: none transparent scroll repeat 0% 0%; COLOR: #003366; TEXT-DECORATION: underline
+}
+#leftnavcol {
+	DISPLAY: none
+}
+#banner {
+	DISPLAY: none
+}
+#rightcol {
+	DISPLAY: none
+}
+#globaltop2 {
+	WIDTH: 669px; align: left
+}
+#bodycol {
+	WIDTH: 669px; align: left
+}
+#topnav {
+	WIDTH: 669px; align: left
+}
+#globaltop2 {
+	BACKGROUND-IMAGE: none; BACKGROUND-COLOR: white
+}
+#site_search {
+	DISPLAY: none
+}
+#search_button {
+	DISPLAY: none
+}
+#ptools2 {
+	DISPLAY: none
+}
+#access2 {
+	DISPLAY: none
+}
+#pixelfade {
+	DISPLAY: none
+}
+#topstrip {
+	DISPLAY: none
+}
+#language_pref {
+	DISPLAY: none
+}
+#mainbody {
+	MARGIN-BOTTOM: 20px; MARGIN-LEFT: 0px
+}
+#print_logo {
+	DISPLAY: block
+}

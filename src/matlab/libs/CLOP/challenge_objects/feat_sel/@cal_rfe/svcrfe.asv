@@ -1,0 +1,91 @@
+function a = svcrfe(in, hyper) 
+
+%=========================================================================
+% Recursive feature elimination feature ranking with SVC classifier
+%=========================================================================   
+% A=SVCRFE(H) returns a rfe object initialized with hyperparameters H. 
+% A=SVCRFE(S,H), where S is an SVC object with its hyperparameters.
+%
+% The train method ranks features with the RFE method using SVC as a classifier.
+% The top ranking features are selected and the new data matrix returned.
+% The test method uses the ranking obtained with the train method.
+% It selects the top ranking features and returns the new data matrix.
+% The hyperparameters can be changed after construction of the object
+% to allow users to vary the number of features without retraining.
+% NOTE: the spider contains a more powerful version of RFE allowing
+% to use other classifiers than SVC.
+% 
+%  Hyperparameters, and their defaults
+%
+%   f_max           -- Maximum number of features to be selected;
+%                     if feat_max=Inf then no limit is set on the number of
+%                     features, but the ranking is still performed.
+%   div2            -- Flag (0/1) indicating whether the number of features
+%                       is divided by 2 at each iteration, default 1.
+%   child=svc       -- Recommended use: an svc as classifier. Default: linear svc.
+%                      Can also use kridge (linear version): recommended
+%                      for few features and large number of examples.
+%                      Syntax: svcrfe(kridge)
+%
+%  Model
+%
+%  a.fidx          -- Indices of the ranked features. Best first.
+%  a.W             -- Weights used throughout elimination.
+%
+%  Methods:
+%   train, test, get_w, get_fidx
+%
+%  Example:
+%  d=gen(toy); a=svcrfe({svc('C=0.1'), 'f_max=20'}); [r,a]=train(a,d);
+%  get_fidx(a)  % lists the chosen features in  order of importance, using 20 features
+%
+%=========================================================================
+% Reference : Gene selection for cancer classification using support vector machines
+% Author    : I. Guyon, J. Weston, S. Barnhill, and V. Vapnik
+%=========================================================================
+
+% Isabelle Guyon -- isabelle@clopinet.com -- September 2005
+
+a.IamCLOP=1;
+
+% hyperparameters (public)
+a.display_fields={'f_max', 'div2'};
+a.f_max=  default(Inf, [0 Inf]);       % number of features    
+a.div2=default(1, [0 1]);              % flag determining whether to divide
+                                       % by 2 the number of features at 
+                                       % each iteration or go one by one
+a.child=svc;
+
+% parse the arguments
+if nargin>0 
+    if ~isobject(in)       
+        hyper=in;
+    else
+        a.child=in; 
+    end
+end
+
+% hidden (private) hyperparameters (do not change)
+a.div2=1; % divides the number of features by 2 at each iteration
+        % otherwise removes them on-by-one.
+a.w_min=-Inf;         
+
+% model
+a.fidx=[];
+a.W=[];
+
+algoType=algorithm('svcrfe');
+a= class(a,'svcrfe',algoType);
+
+a.algorithm.do_not_evaluate_training_error=0; 
+a.algorithm.verbosity=2;
+
+% overwrite the defaults
+eval_hyper;
+
+if ~(strcmp(a.child.algorithm.name, 'svc'))
+    warning('This is not an svc algorithm');
+end
+
+   
+  

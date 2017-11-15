@@ -1,0 +1,48 @@
+UNKNOWN {
+	MARGIN: 5px; BORDER-BOTTOM: gray 1px dashed
+}
+#rightcol {
+	POSITION: relative; TOP: -20px
+}
+INPUT.monospace {
+	BORDER-RIGHT: black 1px solid; BORDER-TOP: black 1px solid; BORDER-LEFT: black 1px solid; BORDER-BOTTOM: black 1px solid; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.tabs {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; BACKGROUND: url(/images/tab_bottom.gif) repeat-x 50% bottom; FLOAT: left; PADDING-BOTTOM: 0px; WIDTH: 96%; PADDING-TOP: 0px
+}
+.tabs UL {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 12px; LIST-STYLE-TYPE: none
+}
+.tabs LI {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 9px; BACKGROUND: url(/images/left_both.gif) no-repeat left top; FLOAT: left; PADDING-BOTTOM: 0px; MARGIN-RIGHT: 2px; PADDING-TOP: 0px; BORDER-BOTTOM: #254987 1px solid
+}
+.tabs A {
+	PADDING-RIGHT: 15px; DISPLAY: block; PADDING-LEFT: 6px; FONT-WEIGHT: bold; BACKGROUND: url(/images/right_both.gif) no-repeat right top; FLOAT: left; PADDING-BOTTOM: 4px; WIDTH: 0.1em; PADDING-TOP: 5px; WHITE-SPACE: nowrap; TEXT-DECORATION: none
+}
+UNKNOWN {
+	WIDTH: auto
+}
+.tabs A {
+	FLOAT: none
+}
+.tabs A:hover {
+	TEXT-DECORATION: none
+}
+.tabs .active {
+	BORDER-TOP-WIDTH: 0px; BACKGROUND-POSITION: 0px -150px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+.tabs .active A {
+	BACKGROUND-POSITION: 100% -150px; PADDING-BOTTOM: 5px
+}
+.tabs LI:hover {
+	BACKGROUND-POSITION: 0% -150px
+}
+.tabs LI:hover A {
+	BACKGROUND-POSITION: 0% -150px
+}
+.tabs LI:hover A {
+	BACKGROUND-POSITION: 100% -150px
+}
+.tabtble {
+	CLEAR: both; BORDER-RIGHT: #254987 1px solid; BORDER-TOP: #254987 0px solid; BORDER-LEFT: #254987 1px solid; BORDER-BOTTOM: #254987 1px solid
+}

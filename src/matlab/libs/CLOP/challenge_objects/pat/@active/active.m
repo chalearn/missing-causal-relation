@@ -1,0 +1,64 @@
+function a = active(C, hyper)
+
+%  ACTIVE
+%
+% A=ACTIVE(H) Active object with hyperparameters H
+% A=ACTIVE(C,H) returns a Active object initialized with weak
+% learning algorithm of type C and hyperparameters H.
+%
+% This algorithm trrins the child algorithm with a subset
+% of the training data (active set). The size of the active
+% set is given as hyperparameter
+% 
+% Hyperparameters, and their defaults
+% child   = kridge           -- classifier used (if not specified as first argument)
+% p_max   = []               -- maximum number of patterns to train on
+%                               (active set size)
+% maxiter = 10               -- maximum number of trainings.
+% Methods:
+%  train, test
+%
+% Model:
+%  child                  -- learning algorithm
+%
+% Example:
+%
+% X=[1+0.1*rand(5,5); -1+0.1*rand(5,5)];
+% X=[[zeros(8,1);ones(2,1)], X, [zeros(7,1);ones(2,1);0]];
+% Y=[ones(5,1);-ones(5,1)];
+%
+% [r,a]=train(prune(naive),data(X,Y));
+
+% ========================================================================
+% Written by: Isabelle Guyon , isabelle@clopinet.com , Feb. 2009
+% ========================================================================
+
+a.IamCLOP=1;
+
+% Public HP:
+a.display_fields    = {'p_max', 'maxiter'};
+a.child             = kridge; % default classifier.
+a.p_max             = default([], [0, Inf]);
+a.maxiter           = default(10, [0 Inf]);    % Maximum number of trainings.
+a.balance           = default(0, [0, 1]);
+
+% Private
+a.theta=1;
+
+% Model:
+a.active_set        = [];   % Indices of the active patterns.
+
+% parse the arguments
+if nargin>0 
+    if ~isobject(C)       
+        hyper=C;
+    else
+        a.child=C; 
+    end
+end
+
+p   = algorithm('active');
+a   = class(a,'active',p);
+a.algorithm.use_signed_output   = 0;
+
+eval_hyper;

@@ -1,0 +1,30 @@
+function [posdef,chol] = pd_check( a)
+% golub version of cholesky, with nonpos. test
+% input: a  ... sym. matrix
+% output: posdef
+% call: posdef = pd_check( a)
+% posdef = 1 if a is safely pos.def, ie each diag > tol in chol.faktor
+% otherwise posdef = 0;
+
+% Because it breaks down for large matrices, we check for 10 random
+% 100*100 matrices
+
+[n, n1] = size( a); 
+posdef = 0; 
+tol = 1e-15;
+if n~=n1, return; end
+if any(a-a'), return; end
+
+if n>100
+
+for j = 1:n
+    if j > 1,
+        a( j:n,j) = a( j:n,j) - a( j:n,1:j-1) * a(j, 1:j-1)';
+    end
+    if a(j,j) < tol, return, end
+    a( j:n,j) = a( j:n,j) / sqrt( a(j,j) );
+end
+    
+posdef = 1;   %g = tril( a);  this could be used as cholesky factor: a=g*g'
+
+if nargout>1, chol=tril(a)'; end

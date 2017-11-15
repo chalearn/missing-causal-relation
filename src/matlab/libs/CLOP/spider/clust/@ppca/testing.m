@@ -1,0 +1,1 @@
+function results =  testing(a,dat)X = get_x(dat);d = size(X,2);N = size(X,1);W = a.W; u = a.e_vec; Psi = a.sigma;X = (X-repmat(a.offset,size(X,1),1)); %center data S = X'*X; X = X*u;  C = W*W' + eye(d)*Psi;lndetC = 2*sum(log(diag(chol(C))));L = -0.5*N*(d*log(2*pi)+lndetC + trace(inv(C)*S));results = data(X,L);
