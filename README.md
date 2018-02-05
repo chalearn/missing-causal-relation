@@ -8,16 +8,11 @@ Diagram of different causal relations between three variables. Left hand number 
 
 
 ## Repository content
--causal_relation
-Contains main functions that allow to reproduce different causal relationships between three variables (source variable *S*, helper variable *H* and target variable *T*), allowing the generation and imputation of missing data in *S* with *H*.
--graph
-Contains functions that graphically represent the results obtained in different causal relationships.
--libs
-Contains base library functions used in this work.
--statistics
-Contains different statistic functions used in this work, ranging from original T-test to different modifications of this statistic test.
--utils
-Contains general purpose functions.
+- **causal_relation**: Contains main functions that allow to reproduce different causal relationships between three variables (source variable *S*, helper variable *H* and target variable *T*), allowing the generation and imputation of missing data in *S* with *H*.
+- **graph**: Contains functions that graphically represent the results obtained in different causal relationships.
+- **libs**: Contains base library functions used in this work.
+- **statistics**: Contains different statistic functions used in this work, ranging from original T-test to different modifications of this statistic test.
+- **utils**: Contains general purpose functions.
 
 ## Experimental reproduction
 1. Add all the project folders to Matlab path.
