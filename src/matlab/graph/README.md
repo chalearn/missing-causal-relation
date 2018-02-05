@@ -1,4 +1,4 @@
-# graph
+# Graphical Functions Source
 
 *************************************************************
 BASIC INFORMATION

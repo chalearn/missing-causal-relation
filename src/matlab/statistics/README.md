@@ -1,4 +1,4 @@
-# statistics
+# Statistic Functions Source
 
 *************************************************************
 BASIC INFORMATION

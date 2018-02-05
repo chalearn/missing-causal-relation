@@ -1,4 +1,4 @@
-# causal_relation
+# Causal Relations Source
 
 *************************************************************
 BASIC INFORMATION
